@@ -57,7 +57,7 @@
                 <StackPanel Grid.Row="2" Margin="0,20,0,0">
                     <Border Height="1" Background="{StaticResource BorderColor}" Margin="0,0,0,10"/>
                     <TextBlock Text="Local Client Node" FontSize="11" Foreground="{StaticResource SubtextColor}"/>
-                    <TextBlock Text="Connected to: 192.168.1.100" FontSize="10" Foreground="{StaticResource PrimaryColor}"/>
+                    <TextBlock Text="{Binding ConnectionInfo, StringFormat='Connected to: \{0\}'}" FontSize="10" Foreground="{StaticResource PrimaryColor}"/>
                 </StackPanel>
             </Grid>
         </Border>

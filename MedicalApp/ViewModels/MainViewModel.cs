@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using MedicalApp.Models;
 using MedicalApp.Services;
 
+using Microsoft.Extensions.Configuration;
+
 namespace MedicalApp.ViewModels
 {
     public partial class MainViewModel : ObservableObject
@@ -17,15 +19,35 @@ namespace MedicalApp.ViewModels
         [ObservableProperty]
         private Patient? _selectedPatient;
 
+        [ObservableProperty]
+        private string _connectionInfo = "Offline";
+
         // Use Lazy resolving to optimize startup time and instantiate only on-demand
         private readonly Lazy<PatientRegistrationViewModel> _patientRegistrationVm;
         private readonly Lazy<ClinicalExamViewModel> _clinicalExamVm;
         private readonly Lazy<EchoUploadViewModel> _echoUploadVm;
 
-        public MainViewModel(IServiceProvider serviceProvider, ISharedStateService sharedStateService)
+        public MainViewModel(IServiceProvider serviceProvider, ISharedStateService sharedStateService, IConfiguration configuration)
         {
             _serviceProvider = serviceProvider;
             _sharedStateService = sharedStateService;
+
+            // Parse connection string to display actual server/database source dynamically
+            var connString = configuration.GetConnectionString("DefaultConnection") ?? string.Empty;
+            if (connString.Contains("Data Source="))
+            {
+                string dbFile = connString.Split("Data Source=")[1].Split(';')[0];
+                ConnectionInfo = $"SQLite ({dbFile})";
+            }
+            else if (connString.Contains("Server="))
+            {
+                string server = connString.Split("Server=")[1].Split(';')[0];
+                ConnectionInfo = $"Server: {server}";
+            }
+            else
+            {
+                ConnectionInfo = "Local DB Mode";
+            }
 
             // Header patient info synchronization
             SelectedPatient = _sharedStateService.CurrentPatient;
