@@ -53,7 +53,7 @@
                 <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" Height="80" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="0,0,0,20"/>
 
                 <!-- Register Button -->
-                <Button Style="{StaticResource ModernButton}" Content="Register Patient" Command="{Binding RegisterCommand}" HorizontalAlignment="Stretch" Height="42"/>
+                <Button Style="{StaticResource ModernButton}" Content="Register &amp; Send to Queue" Command="{Binding RegisterCommand}" HorizontalAlignment="Stretch" Height="42"/>
 
                 <!-- Status Message -->
                 <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource PrimaryColor}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,15,0,0" HorizontalAlignment="Center"/>
@@ -66,6 +66,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!-- Search Panel -->
@@ -90,6 +91,9 @@
                         <DataGridTextColumn Header="Date Enrolled" Binding="{Binding CreatedAt, StringFormat=\{0:dd/MM/yyyy\}}" Width="120"/>
                     </DataGrid.Columns>
                 </DataGrid>
+
+                <!-- Send to Queue Button -->
+                <Button Grid.Row="2" Style="{StaticResource ModernButton}" Content="Send Selected Patient to Queue" Command="{Binding SendToQueueCommand}" Margin="0,15,0,0" Height="42" HorizontalAlignment="Stretch"/>
             </Grid>
         </Border>
     </Grid>

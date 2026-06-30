@@ -12,6 +12,7 @@ namespace MedicalApp.Data
         public DbSet<Patient> Patients => Set<Patient>();
         public DbSet<Visit> Visits => Set<Visit>();
         public DbSet<EchoRecord> EchoRecords => Set<EchoRecord>();
+        public DbSet<QueueEntry> QueueEntries => Set<QueueEntry>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +30,13 @@ namespace MedicalApp.Data
                 .HasMany(p => p.EchoRecords)
                 .WithOne(e => e.Patient)
                 .HasForeignKey(e => e.PatientId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure Patient -> QueueEntries (One-to-Many, cascade delete)
+            modelBuilder.Entity<QueueEntry>()
+                .HasOne(q => q.Patient)
+                .WithMany()
+                .HasForeignKey(q => q.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

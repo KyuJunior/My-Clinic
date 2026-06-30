@@ -39,6 +39,19 @@ namespace MedicalApp
                 var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();
                 using var dbContext = await factory.CreateDbContextAsync();
                 await dbContext.Database.EnsureCreatedAsync();
+
+                // Create QueueEntries table if it doesn't exist (since EnsureCreated won't do it if the db already exists)
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF OBJECT_ID('dbo.QueueEntries', 'U') IS NULL " +
+                    "CREATE TABLE dbo.QueueEntries (" +
+                    "    QueueEntryId INT IDENTITY(1,1) PRIMARY KEY," +
+                    "    PatientId INT NOT NULL," +
+                    "    PatientName NVARCHAR(200) NOT NULL," +
+                    "    Status NVARCHAR(50) NOT NULL," +
+                    "    CreatedAt DATETIME NOT NULL DEFAULT GETUTCDATE()," +
+                    "    CONSTRAINT FK_QueueEntries_Patients FOREIGN KEY (PatientId) REFERENCES dbo.Patients(PatientId) ON DELETE CASCADE" +
+                    ")"
+                );
             }
             catch (Exception ex)
             {
@@ -99,11 +112,11 @@ namespace MedicalApp
             services.AddDbContextFactory<AppDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            // Register Services
             services.AddSingleton<ISharedStateService, SharedStateService>();
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<IVisitService, VisitService>();
             services.AddTransient<IEchoService, EchoService>();
+            services.AddTransient<IQueueService, QueueService>();
 
             // Register ViewModels
             services.AddSingleton<MainViewModel>();

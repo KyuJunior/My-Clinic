@@ -3,9 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:converters="clr-namespace:MedicalApp.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="900"
+             d:DesignHeight="600" d:DesignWidth="1000"
              Background="Transparent">
+    <UserControl.Resources>
+        <converters:NullToBoolConverter x:Key="NullToBoolConverter"/>
+        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+    </UserControl.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -32,37 +38,152 @@
             </Grid>
         </Border>
 
-        <!-- Main Workspace (Upload Form + Stored Records) -->
+        <!-- Main Workspace (Waitlist Queue + Form + Stored Records) -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/> <!-- Waitlist Queue Sidebar -->
                 <ColumnDefinition Width="380"/> <!-- Upload Form -->
                 <ColumnDefinition Width="*"/>   <!-- Media List Grid -->
             </Grid.ColumnDefinitions>
 
-            <!-- Left Column: Upload Form -->
-            <Border Grid.Column="0" Style="{StaticResource CardBorder}" Margin="0,0,15,0" VerticalAlignment="Top">
-                <StackPanel>
-                    <TextBlock Text="Upload Echo Media" Style="{StaticResource Header2}"/>
-                    <TextBlock Text="Store scans, clips, or reports in the central shared folder." Style="{StaticResource Subheading}" Margin="0,0,0,20"/>
+            <!-- Column 0: Active Waitlist Queue -->
+            <Border Grid.Column="0" Style="{StaticResource CardBorder}" Margin="0,0,15,0" VerticalAlignment="Stretch">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                    <!-- Title/Label -->
-                    <TextBlock Text="Record Label / Title" Style="{StaticResource Subheading}"/>
-                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,15"/>
+                    <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                        <TextBlock Text="Today's Waitlist" Style="{StaticResource Header2}"/>
+                        <TextBlock Text="Live queue updates from registration." Style="{StaticResource Subheading}"/>
+                    </StackPanel>
 
-                    <!-- Notes/Description -->
-                    <TextBlock Text="Clinical Findings &amp; Notes" Style="{StaticResource Subheading}"/>
-                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Height="120" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="0,0,0,20"/>
+                    <ListBox Grid.Row="1" ItemsSource="{Binding ActiveQueue}" BorderThickness="0" Background="Transparent" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,10" Background="White">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
 
-                    <!-- Pick & Upload Button -->
-                    <Button Style="{StaticResource ModernButton}" Content="Browse &amp; Upload Media" Command="{Binding UploadEchoFileCommand}" HorizontalAlignment="Stretch" Height="42"/>
+                                        <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding PatientName}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource TextColor}" TextTrimming="CharacterEllipsis"/>
+                                        
+                                        <!-- Status Badge -->
+                                        <Border Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" CornerRadius="4" Padding="6,2" Margin="0,5,0,0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                                            <Setter Property="Background" Value="#F1F5F9"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="InExam">
+                                                            <Setter Property="Background" Value="#FFE4E6"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="InEcho">
+                                                            <Setter Property="Background" Value="#E0F2FE"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock FontSize="10" FontWeight="SemiBold">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                                                <Setter Property="Text" Value="Waiting"/>
+                                                                <Setter Property="Foreground" Value="#64748B"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="InExam">
+                                                                <Setter Property="Text" Value="In Exam"/>
+                                                                <Setter Property="Foreground" Value="#E11D48"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="InEcho">
+                                                                <Setter Property="Text" Value="In Echo"/>
+                                                                <Setter Property="Foreground" Value="#0284C7"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
 
-                    <!-- Status Message -->
-                    <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource PrimaryColor}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,15,0,0" HorizontalAlignment="Center"/>
-                </StackPanel>
+                                        <!-- Start Action Button -->
+                                        <Button Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource ModernButton}" Content="Start" VerticalAlignment="Center" Padding="10,4" FontSize="11"
+                                                Command="{Binding DataContext.StartSessionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
             </Border>
 
-            <!-- Right Column: Stored Echo List -->
-            <Border Grid.Column="1" Style="{StaticResource CardBorder}" Margin="15,0,0,0" VerticalAlignment="Stretch">
+            <!-- Column 1: Upload Form -->
+            <Border Grid.Column="1" Style="{StaticResource CardBorder}" Margin="0,0,15,0" VerticalAlignment="Top">
+                <Grid>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding CurrentPatient, Converter={StaticResource NullToVisibilityConverter}}">
+                        <StackPanel>
+                            <TextBlock Text="Upload Echo Media" Style="{StaticResource Header2}"/>
+                            <TextBlock Text="Store scans, clips, or reports in the central shared folder." Style="{StaticResource Subheading}" Margin="0,0,0,20"/>
+
+                            <!-- Active Patient Details -->
+                            <Border Background="#F8FAFC" BorderBrush="{StaticResource BorderColor}" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,15">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="{Binding CurrentPatient.Name}" FontWeight="Bold" FontSize="14" Foreground="{StaticResource PrimaryColor}"/>
+                                        <TextBlock Text="{Binding CurrentPatient.Phone}" FontSize="12" Foreground="{StaticResource SubtextColor}"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource TextColor}">
+                                        <Run Text="{Binding CurrentPatient.Age}"/> <Run Text="yrs,"/> <Run Text="{Binding CurrentPatient.Gender}"/>
+                                    </TextBlock>
+                                </Grid>
+                            </Border>
+
+                            <!-- Title/Label -->
+                            <TextBlock Text="Record Label / Title" Style="{StaticResource Subheading}"/>
+                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,15"/>
+
+                            <!-- Notes/Description -->
+                            <TextBlock Text="Clinical Findings &amp; Notes" Style="{StaticResource Subheading}"/>
+                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Height="120" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="0,0,0,20"/>
+
+                            <!-- Pick & Upload Button -->
+                            <Button Style="{StaticResource ModernButton}" Content="Browse &amp; Upload Media" Command="{Binding UploadEchoFileCommand}" HorizontalAlignment="Stretch" Height="42" Margin="0,0,0,20"/>
+
+                            <!-- Done / Finish Session Buttons -->
+                            <StackPanel>
+                                <Button Style="{StaticResource ModernButton}" Content="End Echo &amp; Complete Visit" Command="{Binding CompleteSessionDoneCommand}" HorizontalAlignment="Stretch" Height="40" Margin="0,0,0,10"/>
+                                <Button Style="{StaticResource ModernButton}" Content="End Echo &amp; Send to Exam" Command="{Binding CompleteSessionToExamCommand}" Background="#0284C7" BorderBrush="#0284C7" HorizontalAlignment="Stretch" Height="40"/>
+                            </StackPanel>
+
+                            <!-- Status Message -->
+                            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource PrimaryColor}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,15,0,0" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Placeholder (visible when no patient is selected) -->
+                    <Border Visibility="{Binding CurrentPatient, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Inverse}" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="20">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="No Active Echo Session" FontSize="16" FontWeight="Bold" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Text="Select a patient from the waitlist on the left to start uploading Echocardiogram records." FontSize="12" Foreground="{StaticResource SubtextColor}" TextAlignment="Center" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- Column 2: Stored Echo List -->
+            <Border Grid.Column="2" Style="{StaticResource CardBorder}" Margin="15,0,0,0" VerticalAlignment="Stretch">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

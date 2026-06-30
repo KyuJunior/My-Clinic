@@ -9,7 +9,12 @@ namespace MedicalApp.Converters
     {
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return value != null ? Visibility.Visible : Visibility.Collapsed;
+            bool hasValue = value != null;
+            if (parameter != null && parameter.ToString()?.ToLower() == "inverse")
+            {
+                return hasValue ? Visibility.Collapsed : Visibility.Visible;
+            }
+            return hasValue ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

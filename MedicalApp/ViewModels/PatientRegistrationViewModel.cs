@@ -12,6 +12,7 @@ namespace MedicalApp.ViewModels
     {
         private readonly IPatientService _patientService;
         private readonly ISharedStateService _sharedStateService;
+        private readonly IQueueService _queueService;
 
         [ObservableProperty]
         private string _searchTerm = string.Empty;
@@ -41,10 +42,11 @@ namespace MedicalApp.ViewModels
         [ObservableProperty]
         private string _statusMessage = string.Empty;
 
-        public PatientRegistrationViewModel(IPatientService patientService, ISharedStateService sharedStateService)
+        public PatientRegistrationViewModel(IPatientService patientService, ISharedStateService sharedStateService, IQueueService queueService)
         {
             _patientService = patientService;
             _sharedStateService = sharedStateService;
+            _queueService = queueService;
             
             // Sync with current selection
             SelectedPatient = _sharedStateService.CurrentPatient;
@@ -109,7 +111,11 @@ namespace MedicalApp.ViewModels
                 };
 
                 await _patientService.AddPatientAsync(patient);
-                StatusMessage = $"Patient '{Name}' registered successfully!";
+                
+                // Add registered patient to daily queue automatically
+                await _queueService.AddToQueueAsync(patient.PatientId, patient.Name);
+                
+                StatusMessage = $"Patient '{Name}' registered & added to waitlist queue!";
                 
                 // Clear Form
                 Name = string.Empty;
@@ -122,6 +128,26 @@ namespace MedicalApp.ViewModels
             catch (Exception ex)
             {
                 StatusMessage = $"Error registering patient: {ex.Message}";
+            }
+        }
+
+        [RelayCommand]
+        public async Task SendToQueueAsync()
+        {
+            if (SelectedPatient == null)
+            {
+                StatusMessage = "Please select a patient to queue.";
+                return;
+            }
+
+            try
+            {
+                await _queueService.AddToQueueAsync(SelectedPatient.PatientId, SelectedPatient.Name);
+                StatusMessage = $"Patient '{SelectedPatient.Name}' added to waitlist queue!";
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error queueing patient: {ex.Message}";
             }
         }
     }

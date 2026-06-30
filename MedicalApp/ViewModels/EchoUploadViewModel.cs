@@ -17,12 +17,17 @@ namespace MedicalApp.ViewModels
         private readonly IPatientService _patientService;
         private readonly ISharedStateService _sharedStateService;
         private readonly IConfiguration _configuration;
+        private readonly IQueueService _queueService;
+        private readonly System.Windows.Threading.DispatcherTimer _pollingTimer;
 
         [ObservableProperty]
         private Patient? _currentPatient;
 
         [ObservableProperty]
         private ObservableCollection<EchoRecord> _echoRecords = new();
+
+        [ObservableProperty]
+        private ObservableCollection<QueueEntry> _activeQueue = new();
 
         // Standalone Patient Lookup fields
         [ObservableProperty]
@@ -43,12 +48,13 @@ namespace MedicalApp.ViewModels
         [ObservableProperty]
         private string _statusMessage = string.Empty;
 
-        public EchoUploadViewModel(IEchoService echoService, IPatientService patientService, ISharedStateService sharedStateService, IConfiguration configuration)
+        public EchoUploadViewModel(IEchoService echoService, IPatientService patientService, ISharedStateService sharedStateService, IConfiguration configuration, IQueueService queueService)
         {
             _echoService = echoService;
             _patientService = patientService;
             _sharedStateService = sharedStateService;
             _configuration = configuration;
+            _queueService = queueService;
 
             // Load initial patient context and subscribe to selection updates
             CurrentPatient = _sharedStateService.CurrentPatient;
@@ -62,6 +68,31 @@ namespace MedicalApp.ViewModels
 
             // Load initial patient list for the search lookup dropdown
             _ = SearchPatientsAsync();
+
+            // Set up 2-second queue polling timer
+            _pollingTimer = new System.Windows.Threading.DispatcherTimer();
+            _pollingTimer.Interval = TimeSpan.FromSeconds(2);
+            _pollingTimer.Tick += OnPollingTimerTick;
+            _pollingTimer.Start();
+            _ = PollQueueAsync();
+        }
+
+        private void OnPollingTimerTick(object? sender, EventArgs e)
+        {
+            _ = PollQueueAsync();
+        }
+
+        private async Task PollQueueAsync()
+        {
+            try
+            {
+                var active = await _queueService.GetActiveQueueAsync();
+                ActiveQueue = new ObservableCollection<QueueEntry>(active);
+            }
+            catch
+            {
+                // Ignore background transient query errors
+            }
         }
 
         partial void OnSelectedPatientLookupChanged(Patient? value)
@@ -199,8 +230,87 @@ namespace MedicalApp.ViewModels
             }
         }
 
+        [RelayCommand]
+        public async Task StartSessionAsync(QueueEntry entry)
+        {
+            if (entry == null) return;
+            try
+            {
+                // Update queue status to InEcho
+                await _queueService.UpdateQueueStatusAsync(entry.PatientId, "InEcho");
+
+                // Get patient from DB
+                var patient = await _patientService.GetPatientByIdAsync(entry.PatientId);
+                SelectedPatientLookup = patient;
+                StatusMessage = $"Echo session started for {entry.PatientName}.";
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error starting Echo session: {ex.Message}";
+            }
+        }
+
+        [RelayCommand]
+        public async Task CompleteSessionDoneAsync()
+        {
+            if (CurrentPatient == null)
+            {
+                StatusMessage = "No active patient to complete.";
+                return;
+            }
+
+            try
+            {
+                // Set queue entry status as Completed
+                await _queueService.CompleteQueueEntryAsync(CurrentPatient.PatientId);
+                StatusMessage = $"Echo session for '{CurrentPatient.Name}' completed and removed from queue.";
+
+                // Clear session
+                SelectedPatientLookup = null;
+                CurrentPatient = null;
+                EchoRecords.Clear();
+
+                Title = string.Empty;
+                Notes = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error completing Echo session: {ex.Message}";
+            }
+        }
+
+        [RelayCommand]
+        public async Task CompleteSessionToExamAsync()
+        {
+            if (CurrentPatient == null)
+            {
+                StatusMessage = "No active patient to complete.";
+                return;
+            }
+
+            try
+            {
+                // Return queue status to Pending (sends them back to doctor exam waitlist)
+                await _queueService.UpdateQueueStatusAsync(CurrentPatient.PatientId, "Pending");
+                StatusMessage = $"Echo session saved. '{CurrentPatient.Name}' sent to Exam waitlist.";
+
+                // Clear session
+                SelectedPatientLookup = null;
+                CurrentPatient = null;
+                EchoRecords.Clear();
+
+                Title = string.Empty;
+                Notes = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error sending patient back to Exam: {ex.Message}";
+            }
+        }
+
         public void Dispose()
         {
+            _pollingTimer.Stop();
             _sharedStateService.CurrentPatientChanged -= OnSharedPatientChanged;
             GC.SuppressFinalize(this);
         }
