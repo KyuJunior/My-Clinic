@@ -78,6 +78,11 @@ namespace MedicalApp
                     case "/echo":
                         LaunchStandaloneWindow("Echocardiogram Hub", ServiceProvider.GetRequiredService<EchoUploadViewModel>(), 950, 720);
                         return;
+                    case "/home":
+                    case "--home":
+                        var homeWindow = ServiceProvider.GetRequiredService<Views.HomeLauncherWindow>();
+                        homeWindow.Show();
+                        return;
                 }
             }
 
@@ -86,8 +91,9 @@ namespace MedicalApp
             mainWindow.Show();
         }
 
-        private void LaunchStandaloneWindow(string title, object viewModel, double width, double height)
+        public static void LaunchStandaloneWindow(string title, object viewModel, double width, double height)
         {
+            var app = (App)Application.Current;
             var window = new Window
             {
                 Title = title,
@@ -95,7 +101,7 @@ namespace MedicalApp
                 Width = width,
                 Height = height,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                Background = (System.Windows.Media.SolidColorBrush)FindResource("BackgroundColor")
+                Background = (System.Windows.Media.SolidColorBrush)app.FindResource("BackgroundColor")
             };
 
             // Dispose ViewModel when standalone window is closed to prevent memory leaks and endless polling
@@ -130,9 +136,11 @@ namespace MedicalApp
 
             // Register ViewModels
             services.AddSingleton<MainViewModel>();
+            services.AddTransient<HomeLauncherViewModel>();
             services.AddTransient<PatientRegistrationViewModel>();
             services.AddTransient<ClinicalExamViewModel>();
             services.AddTransient<EchoUploadViewModel>();
+            services.AddTransient<Views.HomeLauncherWindow>();
 
             // Register Main Window
             services.AddSingleton<MainWindow>(provider => new MainWindow
