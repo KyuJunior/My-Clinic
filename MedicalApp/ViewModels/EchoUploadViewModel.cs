@@ -77,9 +77,11 @@ namespace MedicalApp.ViewModels
             _ = PollQueueAsync();
         }
 
-        private void OnPollingTimerTick(object? sender, EventArgs e)
+        private async void OnPollingTimerTick(object? sender, EventArgs e)
         {
-            _ = PollQueueAsync();
+            _pollingTimer.Stop();
+            await PollQueueAsync();
+            _pollingTimer.Start();
         }
 
         private async Task PollQueueAsync()

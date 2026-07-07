@@ -97,6 +97,16 @@ namespace MedicalApp
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 Background = (System.Windows.Media.SolidColorBrush)FindResource("BackgroundColor")
             };
+
+            // Dispose ViewModel when standalone window is closed to prevent memory leaks and endless polling
+            window.Closed += (s, ev) =>
+            {
+                if (viewModel is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+            };
+
             window.Show();
         }
 
