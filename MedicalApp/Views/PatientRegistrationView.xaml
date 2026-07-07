@@ -206,11 +206,80 @@
                         <!-- Search Bar -->
                         <Grid Grid.Row="0" Margin="0,0,0,15">
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/> <!-- Settings Gear -->
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Style="{StaticResource ModernTextBox}" Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}" Tag="بحث باسم المريض أو رقم الهاتف..." Margin="0,0,10,0" VerticalContentAlignment="Center"/>
-                            <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="بحث" Command="{Binding SearchCommand}" Padding="20,8"/>
+
+                            <!-- Settings Gear Button for Grid Columns -->
+                            <Grid Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center">
+                                <Button Style="{StaticResource NavButton}" Content="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{StaticResource SubtextColor}" Command="{Binding ToggleGridGearCommand}"/>
+                                
+                                <!-- 3-Column Popup switches list to control all column visibilities -->
+                                <Popup IsOpen="{Binding IsGridGearOpen, Mode=TwoWay}" StaysOpen="False" Placement="Bottom">
+                                    <Border Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1.5" CornerRadius="8" Padding="15" Width="620">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.15" ShadowDepth="3"/>
+                                        </Border.Effect>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Row="0" Text="إعدادات أعمدة الجدول (عرض / إخفاء)" FontSize="13" FontWeight="Bold" Foreground="{StaticResource TextColor}" Margin="0,0,0,10" HorizontalAlignment="Right"/>
+                                            
+                                            <Grid Grid.Row="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Left Column (Column 0) -->
+                                                <StackPanel Grid.Column="0" Margin="0,0,10,0" FlowDirection="RightToLeft">
+                                                    <CheckBox Content="الرمز" IsChecked="{Binding ShowPatientId}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="الاسم" IsChecked="{Binding ShowName}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="العمر" IsChecked="{Binding ShowAge}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="الجنس" IsChecked="{Binding ShowGender}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="العمل" IsChecked="{Binding ShowJob}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="العنوان" IsChecked="{Binding ShowAddress}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="ملاحظات" IsChecked="{Binding ShowNotes}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="الحساسية" IsChecked="{Binding ShowAllergy}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                </StackPanel>
+
+                                                <!-- Middle Column (Column 1) -->
+                                                <StackPanel Grid.Column="1" Margin="10,0,10,0" FlowDirection="RightToLeft">
+                                                    <CheckBox Content="المحافظة" IsChecked="{Binding ShowGovernorate}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="رقم الهاتف" IsChecked="{Binding ShowPhone}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="الوزن" IsChecked="{Binding ShowWeight}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="الطول" IsChecked="{Binding ShowHeight}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="الحالة الزوجية" IsChecked="{Binding ShowMaritalStatus}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="اسم الزوج/ة" IsChecked="{Binding ShowSpouseName}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="هل يوجد اطفال" IsChecked="{Binding ShowHasChildren}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                </StackPanel>
+
+                                                <!-- Right Column (Column 2) -->
+                                                <StackPanel Grid.Column="2" Margin="10,0,0,0" FlowDirection="RightToLeft">
+                                                    <CheckBox Content="فصيلة الدم" IsChecked="{Binding ShowBloodGroup}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="التدخين" IsChecked="{Binding ShowSmoking}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="الكحول" IsChecked="{Binding ShowAlcohol}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="من طرف" IsChecked="{Binding ShowReferredBy}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="تاريخ المراجعة" IsChecked="{Binding ShowReturnDate}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="اخر زيارة" IsChecked="{Binding ShowLastVisit}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="عدد الزيارات" IsChecked="{Binding ShowVisitsCount}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="تاريخ الزواج" IsChecked="{Binding ShowMarriageDate}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="تاريخ ولادة الزوج/ة" IsChecked="{Binding ShowSpouseBirthDate}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="فصيلة دم الزوج/ة" IsChecked="{Binding ShowSpouseBloodGroup}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                    <CheckBox Content="تاريخ ولادة اخر طفل" IsChecked="{Binding ShowLastChildBirthDate}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+
+                            <TextBox Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}" Tag="بحث باسم المريض أو رقم الهاتف..." Margin="0,0,10,0" VerticalContentAlignment="Center"/>
+                            <Button Grid.Column="2" Style="{StaticResource ModernButton}" Content="بحث" Command="{Binding SearchCommand}" Padding="20,8"/>
                         </Grid>
 
                         <!-- DataGrid Table -->
@@ -218,10 +287,12 @@
                             <DataGrid ItemsSource="{Binding Patients}" SelectedItem="{Binding SelectedPatient}" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" GridLinesVisibility="Horizontal" BorderThickness="0" Background="Transparent">
                                 <DataGrid.Columns>
                                     <!-- Patient Code -->
-                                    <DataGridTextColumn Header="الرمز" Binding="{Binding PatientId}" Width="60" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="الرمز" Binding="{Binding PatientId}" Width="60" IsReadOnly="True"
+                                                        Visibility="{Binding Data.ShowPatientId, Source={StaticResource Proxy}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                     
                                     <!-- Patient Name -->
-                                    <DataGridTextColumn Header="الاسم" Binding="{Binding Name}" Width="150" IsReadOnly="True">
+                                    <DataGridTextColumn Header="الاسم" Binding="{Binding Name}" Width="150" IsReadOnly="True"
+                                                        Visibility="{Binding Data.ShowName, Source={StaticResource Proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="FontWeight" Value="SemiBold"/>
@@ -231,10 +302,12 @@
                                     </DataGridTextColumn>
 
                                     <!-- Age -->
-                                    <DataGridTextColumn Header="العمر" Binding="{Binding Age}" Width="60" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="العمر" Binding="{Binding Age}" Width="60" IsReadOnly="True"
+                                                        Visibility="{Binding Data.ShowAge, Source={StaticResource Proxy}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                                     <!-- Gender -->
-                                    <DataGridTextColumn Header="الجنس" Binding="{Binding Gender}" Width="70" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="الجنس" Binding="{Binding Gender}" Width="70" IsReadOnly="True"
+                                                        Visibility="{Binding Data.ShowGender, Source={StaticResource Proxy}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                                     <!-- Governorate -->
                                     <DataGridTextColumn Header="المحافظة" Binding="{Binding Governorate}" Width="90" IsReadOnly="True"

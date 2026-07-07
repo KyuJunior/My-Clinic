@@ -174,9 +174,30 @@ namespace MedicalApp.ViewModels
         [ObservableProperty]
         private string _allergy = string.Empty;
 
-        // The 22 show/hide switches matching mockup
+        // The show/hide switches
         [ObservableProperty]
         private bool _isGearMenuOpen = false;
+
+        [ObservableProperty]
+        private bool _isGridGearOpen = false;
+
+        [RelayCommand]
+        public void ToggleGridGear()
+        {
+            IsGridGearOpen = !IsGridGearOpen;
+        }
+
+        [ObservableProperty]
+        private bool _showPatientId = true;
+
+        [ObservableProperty]
+        private bool _showName = true;
+
+        [ObservableProperty]
+        private bool _showAge = true;
+
+        [ObservableProperty]
+        private bool _showGender = true;
 
         [ObservableProperty]
         private bool _showGovernorate = true;
