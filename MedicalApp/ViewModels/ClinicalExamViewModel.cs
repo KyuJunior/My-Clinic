@@ -1,5 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -20,6 +23,9 @@ namespace MedicalApp.ViewModels
         private readonly IPrintService _printService;
         private readonly IDbContextFactory<Data.AppDbContext> _dbContextFactory;
         private readonly System.Windows.Threading.DispatcherTimer _pollingTimer;
+
+        private static readonly string DraftsFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "session_drafts.json");
+        private bool _isSavingOrLoadingDraft;
 
         [ObservableProperty]
         private Patient? _currentPatient;
@@ -86,6 +92,8 @@ namespace MedicalApp.ViewModels
             _printService = printService;
             _dbContextFactory = dbContextFactory;
 
+            _prescribedDrugs.CollectionChanged += (s, e) => TriggerAutoSave();
+
             // Load initial patient context and subscribe to selection updates
             CurrentPatient = _sharedStateService.CurrentPatient;
             SelectedPatientLookup = CurrentPatient;
@@ -141,6 +149,18 @@ namespace MedicalApp.ViewModels
                 {
                     VisitHistory.Clear();
                 }
+            }
+        }
+
+        partial void OnCurrentPatientChanged(Patient? value)
+        {
+            if (value != null)
+            {
+                _ = LoadDraftForPatientAsync(value.PatientId);
+            }
+            else
+            {
+                ClearFormFieldsWithoutAutoSave();
             }
         }
 
@@ -229,15 +249,13 @@ namespace MedicalApp.ViewModels
                     await db.SaveChangesAsync();
                 }
 
+                // Delete local draft
+                await DeleteDraftForPatientAsync(CurrentPatient.PatientId);
+
                 StatusMessage = "Visit log saved successfully!";
 
                 // Clear Form Fields
-                ChiefComplaint = string.Empty;
-                HistoryOfPresentIllness = string.Empty;
-                PhysicalExamination = string.Empty;
-                Diagnosis = string.Empty;
-                TreatmentPlan = string.Empty;
-                PrescribedDrugs.Clear();
+                ClearFormFieldsWithoutAutoSave();
 
                 await LoadVisitHistoryAsync();
             }
@@ -471,6 +489,135 @@ namespace MedicalApp.ViewModels
             };
 
             _printService.PrintReport(CurrentPatient, mockVisit);
+        }
+
+        partial void OnChiefComplaintChanged(string value) => TriggerAutoSave();
+        partial void OnHistoryOfPresentIllnessChanged(string value) => TriggerAutoSave();
+        partial void OnPhysicalExaminationChanged(string value) => TriggerAutoSave();
+        partial void OnDiagnosisChanged(string value) => TriggerAutoSave();
+        partial void OnTreatmentPlanChanged(string value) => TriggerAutoSave();
+
+        private void TriggerAutoSave()
+        {
+            if (_isSavingOrLoadingDraft || CurrentPatient == null) return;
+            _ = AutoSaveDraftAsync();
+        }
+
+        private async Task AutoSaveDraftAsync()
+        {
+            if (CurrentPatient == null) return;
+            
+            _isSavingOrLoadingDraft = true;
+            try
+            {
+                var drafts = new Dictionary<int, PatientVisitDraft>();
+                if (File.Exists(DraftsFile))
+                {
+                    try
+                    {
+                        string json = await File.ReadAllTextAsync(DraftsFile);
+                        drafts = JsonSerializer.Deserialize<Dictionary<int, PatientVisitDraft>>(json) ?? drafts;
+                    }
+                    catch
+                    {
+                        // File corrupted or empty, start fresh
+                    }
+                }
+
+                drafts[CurrentPatient.PatientId] = new PatientVisitDraft
+                {
+                    PatientId = CurrentPatient.PatientId,
+                    ChiefComplaint = ChiefComplaint ?? string.Empty,
+                    HistoryOfPresentIllness = HistoryOfPresentIllness ?? string.Empty,
+                    PhysicalExamination = PhysicalExamination ?? string.Empty,
+                    Diagnosis = Diagnosis ?? string.Empty,
+                    TreatmentPlan = TreatmentPlan ?? string.Empty,
+                    PrescribedDrugs = new System.Collections.Generic.List<string>(PrescribedDrugs)
+                };
+
+                string outputJson = JsonSerializer.Serialize(drafts, new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(DraftsFile, outputJson);
+            }
+            catch
+            {
+                // Silently ignore disk IO errors
+            }
+            finally
+            {
+                _isSavingOrLoadingDraft = false;
+            }
+        }
+
+        private async Task LoadDraftForPatientAsync(int patientId)
+        {
+            _isSavingOrLoadingDraft = true;
+            try
+            {
+                if (File.Exists(DraftsFile))
+                {
+                    string json = await File.ReadAllTextAsync(DraftsFile);
+                    var drafts = JsonSerializer.Deserialize<Dictionary<int, PatientVisitDraft>>(json);
+                    if (drafts != null && drafts.TryGetValue(patientId, out var draft))
+                    {
+                        ChiefComplaint = draft.ChiefComplaint;
+                        HistoryOfPresentIllness = draft.HistoryOfPresentIllness;
+                        PhysicalExamination = draft.PhysicalExamination;
+                        Diagnosis = draft.Diagnosis;
+                        TreatmentPlan = draft.TreatmentPlan;
+                        
+                        var newCollection = new ObservableCollection<string>(draft.PrescribedDrugs);
+                        newCollection.CollectionChanged += (s, e) => TriggerAutoSave();
+                        PrescribedDrugs = newCollection;
+                        return;
+                    }
+                }
+                
+                // Clear fields if no draft exists
+                ClearFormFieldsWithoutAutoSave();
+            }
+            catch
+            {
+                // Ignore load errors and fallback to clean form
+                ClearFormFieldsWithoutAutoSave();
+            }
+            finally
+            {
+                _isSavingOrLoadingDraft = false;
+            }
+        }
+
+        private async Task DeleteDraftForPatientAsync(int patientId)
+        {
+            try
+            {
+                if (File.Exists(DraftsFile))
+                {
+                    string json = await File.ReadAllTextAsync(DraftsFile);
+                    var drafts = JsonSerializer.Deserialize<Dictionary<int, PatientVisitDraft>>(json);
+                    if (drafts != null && drafts.Remove(patientId))
+                    {
+                        string outputJson = JsonSerializer.Serialize(drafts, new JsonSerializerOptions { WriteIndented = true });
+                        await File.WriteAllTextAsync(DraftsFile, outputJson);
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore delete errors silently
+            }
+        }
+
+        private void ClearFormFieldsWithoutAutoSave()
+        {
+            ChiefComplaint = string.Empty;
+            HistoryOfPresentIllness = string.Empty;
+            PhysicalExamination = string.Empty;
+            Diagnosis = string.Empty;
+            TreatmentPlan = string.Empty;
+            
+            var newCollection = new ObservableCollection<string>();
+            newCollection.CollectionChanged += (s, e) => TriggerAutoSave();
+            PrescribedDrugs = newCollection;
         }
 
         public void Dispose()
