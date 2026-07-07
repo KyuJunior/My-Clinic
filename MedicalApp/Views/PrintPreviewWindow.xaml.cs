@@ -8,12 +8,16 @@ namespace MedicalApp.Views
     {
         private readonly FlowDocument _document;
         private readonly string _documentTitle;
+        private readonly bool _printBackground;
+        private readonly Image? _bgImage;
 
-        public PrintPreviewWindow(FlowDocument document, string documentTitle)
+        public PrintPreviewWindow(FlowDocument document, string documentTitle, bool printBackground = true, Image? bgImage = null)
         {
             InitializeComponent();
             _document = document;
             _documentTitle = documentTitle;
+            _printBackground = printBackground;
+            _bgImage = bgImage;
             DocViewer.Document = _document;
         }
 
@@ -29,7 +33,25 @@ namespace MedicalApp.Views
 
             if (printDialog.ShowDialog() == true)
             {
-                printDialog.PrintDocument(((IDocumentPaginatorSource)_document).DocumentPaginator, _documentTitle);
+                // Collapse background image if we should NOT print it on physical paper
+                if (!_printBackground && _bgImage != null)
+                {
+                    _bgImage.Visibility = Visibility.Collapsed;
+                }
+
+                try
+                {
+                    printDialog.PrintDocument(((IDocumentPaginatorSource)_document).DocumentPaginator, _documentTitle);
+                }
+                finally
+                {
+                    // Restore background visibility for screen preview
+                    if (_bgImage != null)
+                    {
+                        _bgImage.Visibility = Visibility.Visible;
+                    }
+                }
+
                 DialogResult = true;
                 Close();
             }

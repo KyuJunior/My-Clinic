@@ -130,6 +130,27 @@ namespace MedicalApp.Services
             preview.ShowDialog();
         }
 
+        private static BitmapImage? LoadBitmapImage(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+                return null;
+
+            try
+            {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(path, UriKind.Absolute);
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze(); // Make cross-thread safe
+                return bitmap;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public void PrintPrescription(Patient patient, string prescriptionText)
         {
             var settings = LoadSettings();
@@ -148,14 +169,16 @@ namespace MedicalApp.Services
                 Height = 794
             };
 
-            // 1. Draw background template image if enabled
-            if (settings.PrintBackground && File.Exists(settings.RxBackgroundPath))
+            Image? img = null;
+            // 1. Draw background template image (always draw for preview if file exists)
+            if (File.Exists(settings.RxBackgroundPath))
             {
-                try
+                var bitmap = LoadBitmapImage(settings.RxBackgroundPath);
+                if (bitmap != null)
                 {
-                    var img = new Image
+                    img = new Image
                     {
-                        Source = new BitmapImage(new Uri(settings.RxBackgroundPath)),
+                        Source = bitmap,
                         Width = 560,
                         Height = 794,
                         Stretch = Stretch.Fill
@@ -163,10 +186,6 @@ namespace MedicalApp.Services
                     canvas.Children.Add(img);
                     Canvas.SetLeft(img, 0);
                     Canvas.SetTop(img, 0);
-                }
-                catch
-                {
-                    // Fallback silently if image cannot load
                 }
             }
 
@@ -242,8 +261,8 @@ namespace MedicalApp.Services
 
             doc.Blocks.Add(new BlockUIContainer(canvas));
 
-            // Open Print Preview Window
-            var preview = new Views.PrintPreviewWindow(doc, $"CardioCenter Rx - {patient.Name}")
+            // Open Print Preview Window (pass printBackground flag and img reference)
+            var preview = new Views.PrintPreviewWindow(doc, $"CardioCenter Rx - {patient.Name}", settings.PrintBackground, img)
             {
                 Owner = Application.Current.MainWindow
             };
