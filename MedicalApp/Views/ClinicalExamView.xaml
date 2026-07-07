@@ -175,13 +175,84 @@
                             <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Diagnosis, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,15"/>
 
                             <!-- Treatment Plan -->
-                            <TextBlock Text="Treatment Plan &amp; Prescription" Style="{StaticResource Subheading}"/>
-                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding TreatmentPlan, UpdateSourceTrigger=PropertyChanged}" Height="80" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,20"/>
+                            <TextBlock Text="Treatment Plan / Doctor Notes" Style="{StaticResource Subheading}"/>
+                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding TreatmentPlan, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,15"/>
+
+                            <!-- Rx Medication Autocomplete Builder -->
+                            <TextBlock Text="Medication Prescription (Rx)" Style="{StaticResource Subheading}"/>
+                            
+                            <!-- Search & Add Grid -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBox x:Name="DrugInput" Style="{StaticResource ModernTextBox}" 
+                                         Text="{Binding DrugSearchText, UpdateSourceTrigger=PropertyChanged}" 
+                                         Tag="Search or type drug name... (e.g. Aspirin)"/>
+
+                                <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="Add" 
+                                        Command="{Binding AddDrugCommand}" Margin="10,0,0,0" Padding="15,6"/>
+
+                                <!-- Autocomplete Suggestions Popup -->
+                                <Popup IsOpen="{Binding IsDrugSuggestionsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=DrugInput}" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Slide">
+                                    <Border Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1.5" CornerRadius="8" Width="300" MaxHeight="200" Padding="5">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.15" ShadowDepth="3"/>
+                                        </Border.Effect>
+                                        <ListBox ItemsSource="{Binding DrugSuggestions}" BorderThickness="0" Background="Transparent" HorizontalContentAlignment="Stretch">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Style="{StaticResource NavButton}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,6" Content="{Binding}"
+                                                            Command="{Binding DataContext.SelectSuggestedDrugCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+
+                            <!-- Prescribed Drugs List -->
+                            <ItemsControl ItemsSource="{Binding PrescribedDrugs}" Margin="0,0,0,15">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#F1F5F9" CornerRadius="4" Padding="8,4" Margin="0,0,0,5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="{StaticResource TextColor}"/>
+                                                <Button Grid.Column="1" Style="{StaticResource NavButton}" Width="24" Height="24" Tag="&#xE711;" ToolTip="Remove medication" Padding="0" Foreground="#EF4444"
+                                                        Command="{Binding DataContext.RemoveDrugCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
 
                             <!-- Action Buttons -->
-                            <StackPanel>
-                                <Button Style="{StaticResource ModernButton}" Content="End Exam &amp; Complete Visit" Command="{Binding CompleteSessionDoneCommand}" HorizontalAlignment="Stretch" Height="40" Margin="0,0,0,10"/>
-                                <Button Style="{StaticResource ModernButton}" Content="End Exam &amp; Send to Echo" Command="{Binding CompleteSessionToEchoCommand}" Background="#0284C7" BorderBrush="#0284C7" HorizontalAlignment="Stretch" Height="40"/>
+                            <StackPanel Margin="0,5,0,0">
+                                <!-- End Exam Session Actions -->
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0" Style="{StaticResource ModernButton}" Content="Complete Visit" Command="{Binding CompleteSessionDoneCommand}" Height="40" Margin="0,0,5,0"/>
+                                    <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="Send to Echo Waitlist" Command="{Binding CompleteSessionToEchoCommand}" Background="#0284C7" BorderBrush="#0284C7" Height="40" Margin="5,0,0,0"/>
+                                </Grid>
+
+                                <!-- Print Actions -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0" Style="{StaticResource ModernButton}" Content="Print Rx (A5)" Command="{Binding PrintActiveRxCommand}" Background="#10B981" BorderBrush="#10B981" Height="40" Margin="0,0,5,0"/>
+                                    <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="Print Summary (A4)" Command="{Binding PrintActiveVisitReportCommand}" Background="#6366F1" BorderBrush="#6366F1" Height="40" Margin="5,0,0,0"/>
+                                </Grid>
                             </StackPanel>
 
                             <!-- Status Message -->
@@ -257,12 +328,31 @@
                                             </StackPanel>
                                         </Grid>
 
-                                        <!-- Treatment Plan -->
+                                        <!-- Treatment Plan & Rx -->
                                         <Border Grid.Row="3" Background="#F1F5F9" Padding="12,8" CornerRadius="6" Margin="0,6,0,0">
-                                            <StackPanel>
-                                                <TextBlock Text="Treatment Plan" FontSize="11" FontWeight="Bold" Foreground="{StaticResource PrimaryColor}"/>
-                                                <TextBlock Text="{Binding TreatmentPlan}" FontSize="12" Foreground="{StaticResource TextColor}" TextWrapping="Wrap" Margin="0,2,0,0"/>
-                                            </StackPanel>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock Text="Treatment Plan" FontSize="11" FontWeight="Bold" Foreground="{StaticResource PrimaryColor}"/>
+                                                    <TextBlock Text="{Binding TreatmentPlan}" FontSize="12" Foreground="{StaticResource TextColor}" TextWrapping="Wrap" Margin="0,2,0,5"/>
+                                                    
+                                                    <TextBlock Text="Rx (Prescription)" FontSize="11" FontWeight="Bold" Foreground="{StaticResource PrimaryColor}" Margin="0,5,0,0" Visibility="{Binding Prescription, Converter={StaticResource NullToVisibilityConverter}}"/>
+                                                    <TextBlock Text="{Binding Prescription}" FontSize="12" Foreground="{StaticResource TextColor}" TextWrapping="Wrap" Margin="0,2,0,0" FontWeight="SemiBold" Visibility="{Binding Prescription, Converter={StaticResource NullToVisibilityConverter}}"/>
+                                                </StackPanel>
+
+                                                <!-- Print Buttons for past visits -->
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
+                                                    <Button Style="{StaticResource NavButton}" Padding="8,4" Tag="&#xE716;" ToolTip="Print Visit Summary Report (A4)" Width="32" Height="32" Margin="0,0,0,6"
+                                                            Command="{Binding DataContext.PrintVisitReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                    <Button Style="{StaticResource NavButton}" Padding="8,4" Tag="&#xE716;" ToolTip="Print Prescription Pad (A5)" Width="32" Height="32"
+                                                            Command="{Binding DataContext.PrintVisitRxCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
+                                                            Visibility="{Binding Prescription, Converter={StaticResource NullToVisibilityConverter}}"/>
+                                                </StackPanel>
+                                            </Grid>
                                         </Border>
                                     </Grid>
                                 </Border>

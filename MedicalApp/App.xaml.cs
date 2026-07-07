@@ -52,6 +52,21 @@ namespace MedicalApp
                     "    CONSTRAINT FK_QueueEntries_Patients FOREIGN KEY (PatientId) REFERENCES dbo.Patients(PatientId) ON DELETE CASCADE" +
                     ")"
                 );
+
+                // Create Drugs table if it doesn't exist
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF OBJECT_ID('dbo.Drugs', 'U') IS NULL " +
+                    "CREATE TABLE dbo.Drugs (" +
+                    "    DrugId INT IDENTITY(1,1) PRIMARY KEY," +
+                    "    Name NVARCHAR(200) NOT NULL UNIQUE" +
+                    ")"
+                );
+
+                // Add Prescription column to Visits if it doesn't exist
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Visits', 'Prescription') IS NULL " +
+                    "ALTER TABLE dbo.Visits ADD Prescription NVARCHAR(MAX) NOT NULL DEFAULT ''"
+                );
             }
             catch (Exception ex)
             {
@@ -144,6 +159,7 @@ namespace MedicalApp
             services.AddTransient<IVisitService, VisitService>();
             services.AddTransient<IEchoService, EchoService>();
             services.AddTransient<IQueueService, QueueService>();
+            services.AddSingleton<IPrintService, PrintService>();
 
             // Register ViewModels
             services.AddSingleton<MainViewModel>();
@@ -151,6 +167,8 @@ namespace MedicalApp
             services.AddTransient<PatientRegistrationViewModel>();
             services.AddTransient<ClinicalExamViewModel>();
             services.AddTransient<EchoUploadViewModel>();
+            services.AddTransient<PrintSettingsViewModel>();
+            services.AddTransient<Views.PrintSettingsView>();
 
             // Register Main Window
             services.AddSingleton<MainWindow>(provider => new MainWindow

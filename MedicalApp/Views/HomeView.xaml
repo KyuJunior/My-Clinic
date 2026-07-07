@@ -13,11 +13,18 @@
             <RowDefinition Height="*"/>    <!-- 3-Card Selection Grid -->
         </Grid.RowDefinitions>
 
-        <!-- Welcome Header Banner -->
-        <StackPanel Grid.Row="0" Margin="0,40,0,30" HorizontalAlignment="Center">
-            <TextBlock Text="Welcome to CardioCenter Portal" Style="{StaticResource Header1}" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-            <TextBlock Text="Select a clinical room or registry desk below to manage clinic sessions and patient workflow." Style="{StaticResource Subheading}" FontSize="14" HorizontalAlignment="Center"/>
-        </StackPanel>
+        <!-- Welcome Header Banner & Settings Icon -->
+        <Grid Grid.Row="0" Margin="0,20,0,30">
+            <StackPanel HorizontalAlignment="Center" Margin="0,20,0,0">
+                <TextBlock Text="Welcome to CardioCenter Portal" Style="{StaticResource Header1}" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                <TextBlock Text="Select a clinical room or registry desk below to manage clinic sessions and patient workflow." Style="{StaticResource Subheading}" FontSize="14" HorizontalAlignment="Center"/>
+            </StackPanel>
+            
+            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,20,0"
+                    Style="{StaticResource NavButton}" Padding="10" Width="40" Height="40"
+                    Tag="&#xE713;" ToolTip="Print &amp; Calibration Settings"
+                    Command="{Binding DataContext.NavigateToPrintSettingsCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+        </Grid>
 
         <!-- Selection Cards Grid -->
         <Grid Grid.Row="1" MaxWidth="960" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,40">

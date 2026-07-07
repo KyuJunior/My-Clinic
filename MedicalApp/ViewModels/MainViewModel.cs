@@ -27,6 +27,7 @@ namespace MedicalApp.ViewModels
         private readonly Lazy<PatientRegistrationViewModel> _patientRegistrationVm;
         private readonly Lazy<ClinicalExamViewModel> _clinicalExamVm;
         private readonly Lazy<EchoUploadViewModel> _echoUploadVm;
+        private readonly Lazy<PrintSettingsViewModel> _printSettingsVm;
 
         public MainViewModel(IServiceProvider serviceProvider, ISharedStateService sharedStateService, IConfiguration configuration)
         {
@@ -62,6 +63,8 @@ namespace MedicalApp.ViewModels
                 (ClinicalExamViewModel)_serviceProvider.GetService(typeof(ClinicalExamViewModel))!);
             _echoUploadVm = new Lazy<EchoUploadViewModel>(() => 
                 (EchoUploadViewModel)_serviceProvider.GetService(typeof(EchoUploadViewModel))!);
+            _printSettingsVm = new Lazy<PrintSettingsViewModel>(() => 
+                (PrintSettingsViewModel)_serviceProvider.GetService(typeof(PrintSettingsViewModel))!);
 
             // Default view will be overridden by App.xaml.cs, but fallback to PatientRegistration
             NavigateToPatientRegistration();
@@ -73,12 +76,20 @@ namespace MedicalApp.ViewModels
             OnPropertyChanged(nameof(IsPatientRegistryActive));
             OnPropertyChanged(nameof(IsClinicalExamActive));
             OnPropertyChanged(nameof(IsEchoUploadActive));
+            OnPropertyChanged(nameof(IsPrintSettingsActive));
         }
 
-        public bool IsHomeActive => CurrentView is HomeViewModel;
+        public bool IsHomeActive => CurrentView is HomeViewModel || CurrentView is PrintSettingsViewModel; // Keep sidebar collapsed during settings as well
         public bool IsPatientRegistryActive => CurrentView is PatientRegistrationViewModel;
         public bool IsClinicalExamActive => CurrentView is ClinicalExamViewModel;
         public bool IsEchoUploadActive => CurrentView is EchoUploadViewModel;
+        public bool IsPrintSettingsActive => CurrentView is PrintSettingsViewModel;
+
+        [RelayCommand]
+        public void NavigateToPrintSettings()
+        {
+            CurrentView = _printSettingsVm.Value;
+        }
 
         [RelayCommand]
         public void NavigateToHome()

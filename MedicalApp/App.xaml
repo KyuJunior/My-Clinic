@@ -22,6 +22,9 @@
             <DataTemplate DataType="{x:Type viewmodels:EchoUploadViewModel}">
                 <views:EchoUploadView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewmodels:PrintSettingsViewModel}">
+                <views:PrintSettingsView/>
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

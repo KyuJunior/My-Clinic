@@ -6,6 +6,9 @@ using CommunityToolkit.Mvvm.Input;
 using MedicalApp.Models;
 using MedicalApp.Services;
 
+using Microsoft.EntityFrameworkCore;
+using System.Windows;
+
 namespace MedicalApp.ViewModels
 {
     public partial class ClinicalExamViewModel : ObservableObject, IDisposable
@@ -14,6 +17,8 @@ namespace MedicalApp.ViewModels
         private readonly IPatientService _patientService;
         private readonly ISharedStateService _sharedStateService;
         private readonly IQueueService _queueService;
+        private readonly IPrintService _printService;
+        private readonly IDbContextFactory<Data.AppDbContext> _dbContextFactory;
         private readonly System.Windows.Threading.DispatcherTimer _pollingTimer;
 
         [ObservableProperty]
@@ -52,14 +57,34 @@ namespace MedicalApp.ViewModels
         private string _treatmentPlan = string.Empty;
 
         [ObservableProperty]
+        private string _drugSearchText = string.Empty;
+
+        [ObservableProperty]
+        private ObservableCollection<string> _drugSuggestions = new();
+
+        [ObservableProperty]
+        private bool _isDrugSuggestionsOpen;
+
+        [ObservableProperty]
+        private ObservableCollection<string> _prescribedDrugs = new();
+
+        [ObservableProperty]
         private string _statusMessage = string.Empty;
 
-        public ClinicalExamViewModel(IVisitService visitService, IPatientService patientService, ISharedStateService sharedStateService, IQueueService queueService)
+        public ClinicalExamViewModel(
+            IVisitService visitService, 
+            IPatientService patientService, 
+            ISharedStateService sharedStateService, 
+            IQueueService queueService,
+            IPrintService printService,
+            IDbContextFactory<Data.AppDbContext> dbContextFactory)
         {
             _visitService = visitService;
             _patientService = patientService;
             _sharedStateService = sharedStateService;
             _queueService = queueService;
+            _printService = printService;
+            _dbContextFactory = dbContextFactory;
 
             // Load initial patient context and subscribe to selection updates
             CurrentPatient = _sharedStateService.CurrentPatient;
@@ -174,6 +199,8 @@ namespace MedicalApp.ViewModels
 
             try
             {
+                var rxText = string.Join(Environment.NewLine, PrescribedDrugs);
+
                 var visit = new Visit
                 {
                     PatientId = CurrentPatient.PatientId,
@@ -182,10 +209,26 @@ namespace MedicalApp.ViewModels
                     PhysicalExamination = PhysicalExamination,
                     Diagnosis = Diagnosis,
                     TreatmentPlan = TreatmentPlan,
+                    Prescription = rxText,
                     VisitDate = DateTime.UtcNow
                 };
 
                 await _visitService.AddVisitAsync(visit);
+
+                // Save new drugs to drug dictionary for autocomplete
+                using (var db = await _dbContextFactory.CreateDbContextAsync())
+                {
+                    foreach (var drug in PrescribedDrugs)
+                    {
+                        var exists = await db.Drugs.AnyAsync(d => d.Name == drug);
+                        if (!exists)
+                        {
+                            db.Drugs.Add(new Drug { Name = drug });
+                        }
+                    }
+                    await db.SaveChangesAsync();
+                }
+
                 StatusMessage = "Visit log saved successfully!";
 
                 // Clear Form Fields
@@ -194,6 +237,7 @@ namespace MedicalApp.ViewModels
                 PhysicalExamination = string.Empty;
                 Diagnosis = string.Empty;
                 TreatmentPlan = string.Empty;
+                PrescribedDrugs.Clear();
 
                 await LoadVisitHistoryAsync();
             }
@@ -297,6 +341,136 @@ namespace MedicalApp.ViewModels
             {
                 StatusMessage = $"Error sending patient to Echo: {ex.Message}";
             }
+        }
+
+        async partial void OnDrugSearchTextChanged(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value) || value.Length < 2)
+            {
+                DrugSuggestions.Clear();
+                IsDrugSuggestionsOpen = false;
+                return;
+            }
+
+            try
+            {
+                using var db = await _dbContextFactory.CreateDbContextAsync();
+                var matches = await db.Drugs
+                    .Where(d => d.Name.StartsWith(value))
+                    .Select(d => d.Name)
+                    .Take(8)
+                    .ToListAsync();
+
+                DrugSuggestions.Clear();
+                foreach (var match in matches)
+                {
+                    DrugSuggestions.Add(match);
+                }
+                IsDrugSuggestionsOpen = DrugSuggestions.Count > 0;
+            }
+            catch
+            {
+                // Ignore search DB errors silently
+            }
+        }
+
+        [RelayCommand]
+        public void AddDrug()
+        {
+            if (!string.IsNullOrWhiteSpace(DrugSearchText))
+            {
+                string drug = DrugSearchText.Trim();
+                if (!PrescribedDrugs.Contains(drug))
+                {
+                    PrescribedDrugs.Add(drug);
+                }
+                DrugSearchText = string.Empty;
+                IsDrugSuggestionsOpen = false;
+            }
+        }
+
+        [RelayCommand]
+        public void SelectSuggestedDrug(string drugName)
+        {
+            if (!string.IsNullOrEmpty(drugName))
+            {
+                DrugSearchText = drugName;
+                AddDrug();
+            }
+        }
+
+        [RelayCommand]
+        public void RemoveDrug(string drug)
+        {
+            if (PrescribedDrugs.Contains(drug))
+            {
+                PrescribedDrugs.Remove(drug);
+            }
+        }
+
+        [RelayCommand]
+        public void PrintActiveRx()
+        {
+            if (CurrentPatient == null)
+            {
+                StatusMessage = "No patient selected.";
+                return;
+            }
+            if (PrescribedDrugs.Count == 0 && string.IsNullOrWhiteSpace(DrugSearchText))
+            {
+                StatusMessage = "No prescription added yet.";
+                return;
+            }
+
+            string rxText = string.Join(Environment.NewLine, PrescribedDrugs);
+            if (string.IsNullOrWhiteSpace(rxText))
+            {
+                rxText = DrugSearchText.Trim();
+            }
+
+            _printService.PrintPrescription(CurrentPatient, rxText);
+        }
+
+        [RelayCommand]
+        public void PrintVisitRx(Visit visit)
+        {
+            if (CurrentPatient == null || visit == null) return;
+            if (string.IsNullOrWhiteSpace(visit.Prescription))
+            {
+                MessageBox.Show("No prescription was recorded for this visit.", "No Prescription", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            _printService.PrintPrescription(CurrentPatient, visit.Prescription);
+        }
+
+        [RelayCommand]
+        public void PrintVisitReport(Visit visit)
+        {
+            if (CurrentPatient == null || visit == null) return;
+            _printService.PrintReport(CurrentPatient, visit);
+        }
+
+        [RelayCommand]
+        public void PrintActiveVisitReport()
+        {
+            if (CurrentPatient == null)
+            {
+                StatusMessage = "No patient selected.";
+                return;
+            }
+
+            var mockVisit = new Visit
+            {
+                VisitDate = DateTime.UtcNow,
+                ChiefComplaint = ChiefComplaint,
+                HistoryOfPresentIllness = HistoryOfPresentIllness,
+                PhysicalExamination = PhysicalExamination,
+                Diagnosis = Diagnosis,
+                TreatmentPlan = TreatmentPlan,
+                Prescription = string.Join(Environment.NewLine, PrescribedDrugs)
+            };
+
+            _printService.PrintReport(CurrentPatient, mockVisit);
         }
 
         public void Dispose()
