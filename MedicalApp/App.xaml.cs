@@ -105,6 +105,24 @@ namespace MedicalApp
                 await dbContext.Database.ExecuteSqlRawAsync(
                     "IF COL_LENGTH('dbo.Patients', 'Governorate') IS NULL ALTER TABLE dbo.Patients ADD Governorate NVARCHAR(200) NOT NULL DEFAULT ''"
                 );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Patients', 'AgeMonths') IS NULL ALTER TABLE dbo.Patients ADD AgeMonths INT NOT NULL DEFAULT 0"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Patients', 'BirthDate') IS NULL ALTER TABLE dbo.Patients ADD BirthDate DATETIME NULL"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Patients', 'SpouseBirthDate') IS NULL ALTER TABLE dbo.Patients ADD SpouseBirthDate DATETIME NULL"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Patients', 'HasChildren') IS NULL ALTER TABLE dbo.Patients ADD HasChildren NVARCHAR(50) NOT NULL DEFAULT ''"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Patients', 'Notes') IS NULL ALTER TABLE dbo.Patients ADD Notes NVARCHAR(MAX) NOT NULL DEFAULT ''"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Patients', 'PatientFiles') IS NULL ALTER TABLE dbo.Patients ADD PatientFiles NVARCHAR(MAX) NOT NULL DEFAULT ''"
+                );
             }
             catch (Exception ex)
             {

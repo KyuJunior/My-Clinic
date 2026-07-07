@@ -80,6 +80,44 @@ namespace MedicalApp.ViewModels
         [ObservableProperty]
         private bool _showRegistrationModal = false;
 
+        // Advanced registration fields
+        [ObservableProperty]
+        private int _ageMonths;
+
+        [ObservableProperty]
+        private DateTime? _birthDate;
+
+        [ObservableProperty]
+        private DateTime? _spouseBirthDate;
+
+        [ObservableProperty]
+        private string _hasChildren = string.Empty;
+
+        [ObservableProperty]
+        private string _notes = string.Empty;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(PatientFileName))]
+        private string _patientFiles = string.Empty;
+
+        public string PatientFileName => string.IsNullOrEmpty(PatientFiles) ? string.Empty : System.IO.Path.GetFileName(PatientFiles);
+
+        // Section Toggles
+        [ObservableProperty]
+        private bool _isGearMenuOpen = false;
+
+        [ObservableProperty]
+        private bool _showSpouseAndKids = true;
+
+        [ObservableProperty]
+        private bool _showSecondaryAge = true;
+
+        [ObservableProperty]
+        private bool _showExtraContact = true;
+
+        [ObservableProperty]
+        private bool _showNotesAndFiles = true;
+
         public PatientRegistrationViewModel(IPatientService patientService, ISharedStateService sharedStateService, IQueueService queueService)
         {
             _patientService = patientService;
@@ -186,6 +224,84 @@ namespace MedicalApp.ViewModels
         }
 
         [RelayCommand]
+        public void ToggleGearMenu()
+        {
+            IsGearMenuOpen = !IsGearMenuOpen;
+        }
+
+        [RelayCommand]
+        public void UploadPatientFile()
+        {
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "All Files (*.*)|*.*|Image Files (*.png;*.jpg;*.jpeg;*.gif)|*.png;*.jpg;*.jpeg;*.gif|PDF Files (*.pdf)|*.pdf|Excel Files (*.xls;*.xlsx)|*.xls;*.xlsx"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    var sourcePath = openFileDialog.FileName;
+                    var extension = System.IO.Path.GetExtension(sourcePath);
+                    var destDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "PatientFiles");
+                    if (!System.IO.Directory.Exists(destDir))
+                    {
+                        System.IO.Directory.CreateDirectory(destDir);
+                    }
+
+                    var uniqueName = $"patient_{Guid.NewGuid()}{extension}";
+                    var destPath = System.IO.Path.Combine(destDir, uniqueName);
+                    
+                    System.IO.File.Copy(sourcePath, destPath, overwrite: true);
+                    PatientFiles = destPath;
+                    StatusMessage = "Patient document uploaded successfully!";
+                }
+                catch (Exception ex)
+                {
+                    StatusMessage = $"Failed to upload file: {ex.Message}";
+                }
+            }
+        }
+
+        [RelayCommand]
+        public void RemovePatientFile()
+        {
+            try
+            {
+                if (System.IO.File.Exists(PatientFiles))
+                {
+                    System.IO.File.Delete(PatientFiles);
+                }
+            }
+            catch {}
+            PatientFiles = string.Empty;
+        }
+
+        [RelayCommand]
+        public void OpenPatientFile(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath) || !System.IO.File.Exists(filePath))
+            {
+                StatusMessage = "File not found.";
+                return;
+            }
+
+            try
+            {
+                var psi = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = filePath,
+                    UseShellExecute = true
+                };
+                System.Diagnostics.Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Could not open file: {ex.Message}";
+            }
+        }
+
+        [RelayCommand]
         public void LoadExistingPatient(Patient patient)
         {
             if (patient == null) return;
@@ -200,6 +316,12 @@ namespace MedicalApp.ViewModels
                 Phone = patient.Phone;
                 Job = patient.Job;
                 Governorate = patient.Governorate;
+                AgeMonths = patient.AgeMonths;
+                BirthDate = patient.BirthDate;
+                SpouseBirthDate = patient.SpouseBirthDate;
+                HasChildren = patient.HasChildren;
+                Notes = patient.Notes;
+                PatientFiles = patient.PatientFiles;
                 
                 ActiveEditingPatient = patient;
                 RegistrationButtonText = "Update & Send to Queue";
@@ -227,6 +349,12 @@ namespace MedicalApp.ViewModels
                 Phone = string.Empty;
                 Job = string.Empty;
                 Governorate = string.Empty;
+                AgeMonths = 0;
+                BirthDate = null;
+                SpouseBirthDate = null;
+                HasChildren = string.Empty;
+                Notes = string.Empty;
+                PatientFiles = string.Empty;
                 
                 ActiveEditingPatient = null;
                 RegistrationButtonText = "Register & Send to Queue";
@@ -261,6 +389,12 @@ namespace MedicalApp.ViewModels
                     ActiveEditingPatient.Phone = Phone;
                     ActiveEditingPatient.Job = Job;
                     ActiveEditingPatient.Governorate = Governorate;
+                    ActiveEditingPatient.AgeMonths = AgeMonths;
+                    ActiveEditingPatient.BirthDate = BirthDate;
+                    ActiveEditingPatient.SpouseBirthDate = SpouseBirthDate;
+                    ActiveEditingPatient.HasChildren = HasChildren;
+                    ActiveEditingPatient.Notes = Notes;
+                    ActiveEditingPatient.PatientFiles = PatientFiles;
 
                     await _patientService.UpdatePatientAsync(ActiveEditingPatient);
                     
@@ -281,6 +415,12 @@ namespace MedicalApp.ViewModels
                         Phone = Phone,
                         Job = Job,
                         Governorate = Governorate,
+                        AgeMonths = AgeMonths,
+                        BirthDate = BirthDate,
+                        SpouseBirthDate = SpouseBirthDate,
+                        HasChildren = HasChildren,
+                        Notes = Notes,
+                        PatientFiles = PatientFiles,
                         CreatedAt = DateTime.UtcNow
                     };
 
@@ -302,6 +442,12 @@ namespace MedicalApp.ViewModels
                     Phone = string.Empty;
                     Job = string.Empty;
                     Governorate = string.Empty;
+                    AgeMonths = 0;
+                    BirthDate = null;
+                    SpouseBirthDate = null;
+                    HasChildren = string.Empty;
+                    Notes = string.Empty;
+                    PatientFiles = string.Empty;
                     ActiveEditingPatient = null;
                     RegistrationButtonText = "Register & Send to Queue";
                     IsSuggestionsOpen = false;

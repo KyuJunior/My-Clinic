@@ -237,67 +237,187 @@
 
         <!-- Overlay Modal Dialog: Register / Edit Patient (visible when ShowRegistrationModal is true) -->
         <Grid Background="#80000000" Visibility="{Binding ShowRegistrationModal, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Border Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1.5" CornerRadius="12" Width="450" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="25">
+            <Border Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1.5" CornerRadius="12" Width="680" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="25">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="20" Color="Black" Opacity="0.3" ShadowDepth="5"/>
                 </Border.Effect>
-                <StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Header with gear -->
+                        <RowDefinition Height="*"/>    <!-- 2 Column form fields -->
+                        <RowDefinition Height="Auto"/> <!-- Action Buttons -->
+                    </Grid.RowDefinitions>
+
                     <!-- Modal Header -->
-                    <TextBlock Text="تسجيل مريض جديد" FontSize="18" FontWeight="Bold" Foreground="{StaticResource PrimaryColor}" HorizontalAlignment="Right" Margin="0,0,0,15"/>
-
-                    <!-- Full Name -->
-                    <TextBlock Text="الاسم الكامل" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
-                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Tag="أدخل الاسم الرباعي للمريض..." Margin="0,0,0,12" HorizontalContentAlignment="Right"/>
-
-                    <!-- Age & Gender -->
-                    <Grid Margin="0,0,0,12">
+                    <Grid Grid.Row="0" Margin="0,0,0,15">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/> <!-- Settings Gear -->
+                            <ColumnDefinition Width="*"/>    <!-- Title -->
                         </Grid.ColumnDefinitions>
-                        <!-- Age -->
-                        <StackPanel Grid.Column="1" Margin="6,0,0,0">
-                            <TextBlock Text="العمر" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
-                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Age, UpdateSourceTrigger=PropertyChanged}" Tag="سنة" HorizontalContentAlignment="Right"/>
+                        
+                        <!-- Title (RTL Arabic) -->
+                        <TextBlock Grid.Column="1" Text="اضافة المريض" FontSize="20" FontWeight="Bold" Foreground="{StaticResource PrimaryColor}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        
+                        <!-- Settings Gear on the Left -->
+                        <Grid Grid.Column="0">
+                            <Button Style="{StaticResource NavButton}" Content="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{StaticResource SubtextColor}" Command="{Binding ToggleGearMenuCommand}"/>
+                            
+                            <!-- Dropdown popover list of toggles -->
+                            <Popup IsOpen="{Binding IsGearMenuOpen, Mode=TwoWay}" StaysOpen="False" Placement="Bottom">
+                                <Border Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1.5" CornerRadius="8" Padding="12" Width="240">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.15" ShadowDepth="3"/>
+                                    </Border.Effect>
+                                    <StackPanel>
+                                        <TextBlock Text="عرض / إخفاء الحقول" FontSize="12" FontWeight="Bold" Foreground="{StaticResource TextColor}" Margin="0,0,0,8" HorizontalAlignment="Right"/>
+                                        <CheckBox Content="تفاصيل العمر الإضافية" IsChecked="{Binding ShowSecondaryAge}" Margin="0,0,0,6" FlowDirection="RightToLeft"/>
+                                        <CheckBox Content="بيانات الزوج والأطفال" IsChecked="{Binding ShowSpouseAndKids}" Margin="0,0,0,6" FlowDirection="RightToLeft"/>
+                                        <CheckBox Content="معلومات الاتصال والعمل" IsChecked="{Binding ShowExtraContact}" Margin="0,0,0,6" FlowDirection="RightToLeft"/>
+                                        <CheckBox Content="الملاحظات والملفات المرفقة" IsChecked="{Binding ShowNotesAndFiles}" FlowDirection="RightToLeft"/>
+                                    </StackPanel>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </Grid>
+
+                    <!-- Form Fields (2 Columns) -->
+                    <Grid Grid.Row="1" Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/> <!-- Left Column -->
+                            <ColumnDefinition Width="*"/> <!-- Right Column -->
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Right Column (Column 1) - RTL aligned -->
+                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                            <!-- Sequence -->
+                            <TextBlock Text="تسلسل" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding ActiveEditingPatient.PatientId, TargetNullValue='جديد'}" IsReadOnly="True" Background="#F1F5F9" Margin="0,0,0,10" HorizontalContentAlignment="Right"/>
+
+                            <!-- Name -->
+                            <TextBlock Text="الاسم *" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Tag="الاسم" Margin="0,0,0,10" HorizontalContentAlignment="Right"/>
+
+                            <!-- Age in Years -->
+                            <TextBlock Text="العمر (سنوات) *" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Age, UpdateSourceTrigger=PropertyChanged}" Tag="0" Margin="0,0,0,10" HorizontalContentAlignment="Right"/>
+
+                            <!-- Age in Months (Secondary Age) -->
+                            <StackPanel Visibility="{Binding ShowSecondaryAge, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="العمر (أشهر)" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding AgeMonths, UpdateSourceTrigger=PropertyChanged}" Tag="0" Margin="0,0,0,10" HorizontalContentAlignment="Right"/>
+                            </StackPanel>
+
+                            <!-- Birth Date (Secondary Age) -->
+                            <StackPanel Visibility="{Binding ShowSecondaryAge, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="تاريخ الولادة" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <DatePicker SelectedDate="{Binding BirthDate}" Height="36" Margin="0,0,0,10" FlowDirection="RightToLeft"/>
+                            </StackPanel>
+
+                            <!-- Phone Number -->
+                            <TextBlock Text="رقم الهاتف" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}" Tag="07XX-XXXXXXX" Margin="0,0,0,10" HorizontalContentAlignment="Right"/>
+
+                            <!-- Job (Extra Contact) -->
+                            <StackPanel Visibility="{Binding ShowExtraContact, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="العمل" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Job, UpdateSourceTrigger=PropertyChanged}" Tag="العمل" Margin="0,0,0,10" HorizontalContentAlignment="Right"/>
+                            </StackPanel>
+
+                            <!-- Patient Files (Notes and Files) -->
+                            <StackPanel Visibility="{Binding ShowNotesAndFiles, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="الملفات" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <Grid Margin="0,0,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="رفع ملف" Command="{Binding UploadPatientFileCommand}" Background="#0EA5E9" BorderBrush="#0EA5E9" Padding="12,5" FontSize="11" Margin="5,0,0,0"/>
+                                    <TextBox Grid.Column="0" Style="{StaticResource ModernTextBox}" Text="{Binding PatientFileName, Mode=OneWay}" IsReadOnly="True" Background="#F1F5F9" HorizontalContentAlignment="Right"/>
+                                </Grid>
+                                <!-- File link & Remove -->
+                                <Border Background="#F0F9FF" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="4" Padding="8,4" Margin="0,0,0,10"
+                                        Visibility="{Binding PatientFiles, Converter={StaticResource NullToVisibilityConverter}}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Foreground="#0284C7" Margin="0,0,6,0"/>
+                                        <Button Grid.Column="1" Content="{Binding PatientFileName}" Style="{StaticResource NavButton}" Padding="0" HorizontalContentAlignment="Left" Foreground="#0284C7" FontSize="11" FontWeight="SemiBold"
+                                                Command="{Binding OpenPatientFileCommand}" CommandParameter="{Binding PatientFiles}"/>
+                                        <Button Grid.Column="2" Style="{StaticResource NavButton}" Width="16" Height="16" Tag="&#xE711;" ToolTip="حذف الملف" Padding="0" Foreground="#EF4444" FontSize="8"
+                                                Command="{Binding RemovePatientFileCommand}"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
                         </StackPanel>
-                        <!-- Gender -->
-                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
-                            <TextBlock Text="الجنس" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
-                            <ComboBox SelectedValuePath="Content" SelectedValue="{Binding Gender, UpdateSourceTrigger=PropertyChanged}" Height="36">
-                                <ComboBoxItem Content="Male"/>
-                                <ComboBoxItem Content="Female"/>
+
+                        <!-- Left Column (Column 0) - RTL aligned -->
+                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                            <!-- Governorate (Extra Contact) -->
+                            <StackPanel Visibility="{Binding ShowExtraContact, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="المحافظة" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <ComboBox SelectedValuePath="Content" SelectedValue="{Binding Governorate, UpdateSourceTrigger=PropertyChanged}" Height="36" Margin="0,0,0,10" FlowDirection="RightToLeft">
+                                    <ComboBoxItem Content="بغداد"/>
+                                    <ComboBoxItem Content="البصرة"/>
+                                    <ComboBoxItem Content="نينوى"/>
+                                    <ComboBoxItem Content="اربيل"/>
+                                    <ComboBoxItem Content="النجف"/>
+                                    <ComboBoxItem Content="كربلاء"/>
+                                    <ComboBoxItem Content="بابل"/>
+                                    <ComboBoxItem Content="الأنبار"/>
+                                    <ComboBoxItem Content="ديالى"/>
+                                    <ComboBoxItem Content="كركوك"/>
+                                    <ComboBoxItem Content="صلاح الدين"/>
+                                    <ComboBoxItem Content="السليمانية"/>
+                                    <ComboBoxItem Content="دهوك"/>
+                                    <ComboBoxItem Content="واسط"/>
+                                    <ComboBoxItem Content="ميسان"/>
+                                    <ComboBoxItem Content="ذي قار"/>
+                                    <ComboBoxItem Content="المثنى"/>
+                                    <ComboBoxItem Content="القادسية"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Address (Extra Contact) -->
+                            <StackPanel Visibility="{Binding ShowExtraContact, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="العنوان" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" Tag="العنوان بالتفصيل" Margin="0,0,0,10" HorizontalContentAlignment="Right"/>
+                            </StackPanel>
+
+                            <!-- Gender -->
+                            <TextBlock Text="الجنس *" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                            <ComboBox SelectedValuePath="Content" SelectedValue="{Binding Gender, UpdateSourceTrigger=PropertyChanged}" Height="36" Margin="0,0,0,10" FlowDirection="RightToLeft">
+                                <ComboBoxItem Content="ذكر"/>
+                                <ComboBoxItem Content="أنثى"/>
                             </ComboBox>
+
+                            <!-- Spouse's Birth Date (Spouse & Kids) -->
+                            <StackPanel Visibility="{Binding ShowSpouseAndKids, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="تاريخ ولادة الزوج\ة" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <DatePicker SelectedDate="{Binding SpouseBirthDate}" Height="36" Margin="0,0,0,10" FlowDirection="RightToLeft"/>
+                            </StackPanel>
+
+                            <!-- Has Children (Spouse & Kids) -->
+                            <StackPanel Visibility="{Binding ShowSpouseAndKids, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="هل يوجد اطفال" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <ComboBox SelectedValuePath="Content" SelectedValue="{Binding HasChildren, UpdateSourceTrigger=PropertyChanged}" Height="36" Margin="0,0,0,10" FlowDirection="RightToLeft">
+                                    <ComboBoxItem Content="نعم"/>
+                                    <ComboBoxItem Content="لا"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Notes (Notes and Files) -->
+                            <StackPanel Visibility="{Binding ShowNotesAndFiles, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock Text="ملاحظات" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Tag="ملاحظات..." Height="100" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="0,0,0,10" HorizontalContentAlignment="Right"/>
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
 
-                    <!-- Phone Number -->
-                    <TextBlock Text="رقم الهاتف" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
-                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}" Tag="رقم الموبايل..." Margin="0,0,0,12" HorizontalContentAlignment="Right"/>
-
-                    <!-- Job & Governorate -->
-                    <Grid Margin="0,0,0,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <!-- Governorate -->
-                        <StackPanel Grid.Column="1" Margin="6,0,0,0">
-                            <TextBlock Text="المحافظة" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
-                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Governorate, UpdateSourceTrigger=PropertyChanged}" Tag="المحافظة..." HorizontalContentAlignment="Right"/>
-                        </StackPanel>
-                        <!-- Job -->
-                        <StackPanel Grid.Column="0" Margin="0,0,6,0">
-                            <TextBlock Text="العمل" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
-                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Job, UpdateSourceTrigger=PropertyChanged}" Tag="المهنة..." HorizontalContentAlignment="Right"/>
-                        </StackPanel>
-                    </Grid>
-
-                    <!-- Address -->
-                    <TextBlock Text="العنوان بالتفصيل" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
-                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,20" HorizontalContentAlignment="Right"/>
-
-                    <!-- Save & Cancel Action buttons -->
-                    <Grid>
+                    <!-- Save & Cancel Buttons -->
+                    <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -305,10 +425,7 @@
                         <Button Grid.Column="0" Style="{StaticResource ModernButton}" Content="إلغاء" Command="{Binding CancelEditCommand}" Background="#EF4444" BorderBrush="#EF4444" Height="36" Margin="0,0,5,0" Click="CancelButton_Click"/>
                         <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="حفظ" Command="{Binding RegisterCommand}" Height="36" Margin="5,0,0,0"/>
                     </Grid>
-
-                    <!-- Status / Error Messages inside modal -->
-                    <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource PrimaryColor}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,10,0,0" HorizontalAlignment="Center"/>
-                </StackPanel>
+                </Grid>
             </Border>
         </Grid>
     </Grid>
