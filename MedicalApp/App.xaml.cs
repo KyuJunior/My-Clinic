@@ -64,6 +64,7 @@ namespace MedicalApp
             }
 
             // Check command line arguments for individual launching modes
+            bool startOnHome = false;
             if (e.Args.Length > 0)
             {
                 string mode = e.Args[0].ToLower();
@@ -80,10 +81,20 @@ namespace MedicalApp
                         return;
                     case "/home":
                     case "--home":
-                        var homeWindow = ServiceProvider.GetRequiredService<Views.HomeLauncherWindow>();
-                        homeWindow.Show();
-                        return;
+                        startOnHome = true;
+                        break;
                 }
+            }
+
+            // Resolve and configure MainViewModel
+            var mainViewModel = ServiceProvider.GetRequiredService<MainViewModel>();
+            if (startOnHome)
+            {
+                mainViewModel.NavigateToHome();
+            }
+            else
+            {
+                mainViewModel.NavigateToPatientRegistration();
             }
 
             // Resolve and show MainWindow
@@ -136,11 +147,10 @@ namespace MedicalApp
 
             // Register ViewModels
             services.AddSingleton<MainViewModel>();
-            services.AddTransient<HomeLauncherViewModel>();
+            services.AddTransient<HomeViewModel>();
             services.AddTransient<PatientRegistrationViewModel>();
             services.AddTransient<ClinicalExamViewModel>();
             services.AddTransient<EchoUploadViewModel>();
-            services.AddTransient<Views.HomeLauncherWindow>();
 
             // Register Main Window
             services.AddSingleton<MainWindow>(provider => new MainWindow

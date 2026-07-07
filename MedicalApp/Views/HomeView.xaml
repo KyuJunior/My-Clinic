@@ -1,0 +1,88 @@
+<UserControl x:Class="MedicalApp.Views.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="1000"
+             Background="Transparent">
+    
+    <Grid Margin="10,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Header greeting -->
+            <RowDefinition Height="*"/>    <!-- 3-Card Selection Grid -->
+        </Grid.RowDefinitions>
+
+        <!-- Welcome Header Banner -->
+        <StackPanel Grid.Row="0" Margin="0,40,0,30" HorizontalAlignment="Center">
+            <TextBlock Text="Welcome to CardioCenter Portal" Style="{StaticResource Header1}" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+            <TextBlock Text="Select a clinical room or registry desk below to manage clinic sessions and patient workflow." Style="{StaticResource Subheading}" FontSize="14" HorizontalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Selection Cards Grid -->
+        <Grid Grid.Row="1" MaxWidth="960" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="280" MaxWidth="320"/>
+                <ColumnDefinition Width="*" MinWidth="280" MaxWidth="320"/>
+                <ColumnDefinition Width="*" MinWidth="280" MaxWidth="320"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Card 1: Patient Registry -->
+            <Border Grid.Column="0" Style="{StaticResource CardBorder}" Margin="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Icon -->
+                        <RowDefinition Height="Auto"/> <!-- Title -->
+                        <RowDefinition Height="*"/>    <!-- Description -->
+                        <RowDefinition Height="Auto"/> <!-- Enter Button -->
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Grid.Row="0" Text="&#xE716;" FontFamily="Segoe MDL2 Assets" FontSize="48" Foreground="{StaticResource PrimaryColor}" HorizontalAlignment="Center" Margin="0,20,0,25"/>
+                    <TextBlock Grid.Row="1" Text="Patient Registry" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                    <TextBlock Grid.Row="2" Text="Enroll new patients, look up existing patient files with autocomplete search-as-you-type, and send patients to today's active waitlist queue." 
+                               FontSize="12" Foreground="{StaticResource SubtextColor}" TextWrapping="Wrap" TextAlignment="Center" LineHeight="18" Margin="0,0,0,25"/>
+                    
+                    <Button Grid.Row="3" Style="{StaticResource ModernButton}" Content="Enter Registry" Command="{Binding NavigateToRegistryCommand}" Height="40" HorizontalAlignment="Stretch"/>
+                </Grid>
+            </Border>
+
+            <!-- Card 2: Clinical Examination -->
+            <Border Grid.Column="1" Style="{StaticResource CardBorder}" Margin="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Icon -->
+                        <RowDefinition Height="Auto"/> <!-- Title -->
+                        <RowDefinition Height="*"/>    <!-- Description -->
+                        <RowDefinition Height="Auto"/> <!-- Enter Button -->
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Grid.Row="0" Text="&#xE1E2;" FontFamily="Segoe MDL2 Assets" FontSize="48" Foreground="{StaticResource PrimaryColor}" HorizontalAlignment="Center" Margin="0,20,0,25"/>
+                    <TextBlock Grid.Row="1" Text="Clinical Examination" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                    <TextBlock Grid.Row="2" Text="Manage queued patients in real-time, view full clinical exam timeline logs, write notes, and direct patients to completion or to the echo lab." 
+                               FontSize="12" Foreground="{StaticResource SubtextColor}" TextWrapping="Wrap" TextAlignment="Center" LineHeight="18" Margin="0,0,0,25"/>
+                    
+                    <Button Grid.Row="3" Style="{StaticResource ModernButton}" Content="Enter Exam Room" Command="{Binding NavigateToExamCommand}" Height="40" HorizontalAlignment="Stretch"/>
+                </Grid>
+            </Border>
+
+            <!-- Card 3: Echocardiogram Hub -->
+            <Border Grid.Column="2" Style="{StaticResource CardBorder}" Margin="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Icon -->
+                        <RowDefinition Height="Auto"/> <!-- Title -->
+                        <RowDefinition Height="*"/>    <!-- Description -->
+                        <RowDefinition Height="Auto"/> <!-- Enter Button -->
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Grid.Row="0" Text="&#xE722;" FontFamily="Segoe MDL2 Assets" FontSize="48" Foreground="{StaticResource PrimaryColor}" HorizontalAlignment="Center" Margin="0,20,0,25"/>
+                    <TextBlock Grid.Row="1" Text="Echocardiogram Hub" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                    <TextBlock Grid.Row="2" Text="Access waitlist sessions, upload sonography clips/images directly to LAN server storage, and track patient record history logs." 
+                               FontSize="12" Foreground="{StaticResource SubtextColor}" TextWrapping="Wrap" TextAlignment="Center" LineHeight="18" Margin="0,0,0,25"/>
+                    
+                    <Button Grid.Row="3" Style="{StaticResource ModernButton}" Content="Enter Echo Lab" Command="{Binding NavigateToEchoCommand}" Height="40" HorizontalAlignment="Stretch"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

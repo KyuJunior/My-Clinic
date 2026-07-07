@@ -23,6 +23,7 @@ namespace MedicalApp.ViewModels
         private string _connectionInfo = "Offline";
 
         // Use Lazy resolving to optimize startup time and instantiate only on-demand
+        private readonly Lazy<HomeViewModel> _homeVm;
         private readonly Lazy<PatientRegistrationViewModel> _patientRegistrationVm;
         private readonly Lazy<ClinicalExamViewModel> _clinicalExamVm;
         private readonly Lazy<EchoUploadViewModel> _echoUploadVm;
@@ -53,6 +54,8 @@ namespace MedicalApp.ViewModels
             SelectedPatient = _sharedStateService.CurrentPatient;
             _sharedStateService.CurrentPatientChanged += (patient) => SelectedPatient = patient;
 
+            _homeVm = new Lazy<HomeViewModel>(() => 
+                (HomeViewModel)_serviceProvider.GetService(typeof(HomeViewModel))!);
             _patientRegistrationVm = new Lazy<PatientRegistrationViewModel>(() => 
                 (PatientRegistrationViewModel)_serviceProvider.GetService(typeof(PatientRegistrationViewModel))!);
             _clinicalExamVm = new Lazy<ClinicalExamViewModel>(() => 
@@ -60,8 +63,27 @@ namespace MedicalApp.ViewModels
             _echoUploadVm = new Lazy<EchoUploadViewModel>(() => 
                 (EchoUploadViewModel)_serviceProvider.GetService(typeof(EchoUploadViewModel))!);
 
-            // Set default view on load
+            // Default view will be overridden by App.xaml.cs, but fallback to PatientRegistration
             NavigateToPatientRegistration();
+        }
+
+        partial void OnCurrentViewChanged(object? value)
+        {
+            OnPropertyChanged(nameof(IsHomeActive));
+            OnPropertyChanged(nameof(IsPatientRegistryActive));
+            OnPropertyChanged(nameof(IsClinicalExamActive));
+            OnPropertyChanged(nameof(IsEchoUploadActive));
+        }
+
+        public bool IsHomeActive => CurrentView is HomeViewModel;
+        public bool IsPatientRegistryActive => CurrentView is PatientRegistrationViewModel;
+        public bool IsClinicalExamActive => CurrentView is ClinicalExamViewModel;
+        public bool IsEchoUploadActive => CurrentView is EchoUploadViewModel;
+
+        [RelayCommand]
+        public void NavigateToHome()
+        {
+            CurrentView = _homeVm.Value;
         }
 
         [RelayCommand]

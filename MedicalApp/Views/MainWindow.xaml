@@ -16,12 +16,22 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="260"/> <!-- Sidebar Navigation -->
-            <ColumnDefinition Width="*"/>   <!-- Main Workspace -->
+            <ColumnDefinition Width="Auto"/> <!-- Sidebar Navigation (Auto width enables collapsing) -->
+            <ColumnDefinition Width="*"/>    <!-- Main Workspace -->
         </Grid.ColumnDefinitions>
 
         <!-- Sidebar Navigation -->
-        <Border Grid.Column="0" Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,1,0">
+        <Border Grid.Column="0" Width="260" Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,1,0">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsHomeActive}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            
             <Grid Margin="20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -37,18 +47,65 @@
 
                 <!-- Navigation List -->
                 <StackPanel Grid.Row="1">
-                    <Button Style="{StaticResource NavButton}" 
-                            Content="Patient Registry" 
-                            Command="{Binding NavigateToPatientRegistrationCommand}"
-                            Margin="0,0,0,8"/>
-                    <Button Style="{StaticResource NavButton}" 
-                            Content="Clinical Examination" 
-                            Command="{Binding NavigateToClinicalExamCommand}"
-                            Margin="0,0,0,8"/>
-                    <Button Style="{StaticResource NavButton}" 
-                            Content="Echocardiogram Hub" 
-                            Command="{Binding NavigateToEchoUploadCommand}"
-                            Margin="0,0,0,8"/>
+                    <!-- Home -->
+                    <Button Content="Home Dashboard" Tag="&#xE80F;" Command="{Binding NavigateToHomeCommand}" Margin="0,0,0,8">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsHomeActive}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource SelectedTabBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource SelectedTabTextBrush}"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <!-- Patient Registry -->
+                    <Button Content="Patient Registry" Tag="&#xE716;" Command="{Binding NavigateToPatientRegistrationCommand}" Margin="0,0,0,8">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPatientRegistryActive}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource SelectedTabBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource SelectedTabTextBrush}"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <!-- Clinical Examination -->
+                    <Button Content="Clinical Examination" Tag="&#xE1E2;" Command="{Binding NavigateToClinicalExamCommand}" Margin="0,0,0,8">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsClinicalExamActive}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource SelectedTabBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource SelectedTabTextBrush}"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <!-- Echocardiogram Hub -->
+                    <Button Content="Echocardiogram Hub" Tag="&#xE722;" Command="{Binding NavigateToEchoUploadCommand}" Margin="0,0,0,8">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEchoUploadActive}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource SelectedTabBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource SelectedTabTextBrush}"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </StackPanel>
 
                 <!-- Footer / Status Info -->

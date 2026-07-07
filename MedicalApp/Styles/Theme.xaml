@@ -79,21 +79,30 @@
         <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
         <Setter Property="FontFamily" Value="{StaticResource MainFont}"/>
         <Setter Property="FontSize" Value="13"/>
-        <Setter Property="Padding" Value="15,12"/>
+        <Setter Property="Padding" Value="15,11"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border CornerRadius="6" 
+                    <Border Name="Border" CornerRadius="8" 
                             Background="{TemplateBinding Background}" 
-                            Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="True">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{TemplateBinding Tag}" 
+                                       FontFamily="Segoe MDL2 Assets" 
+                                       FontSize="16" 
+                                       VerticalAlignment="Center" 
+                                       Margin="0,0,12,0"
+                                       Foreground="{TemplateBinding Foreground}"/>
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </StackPanel>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{StaticResource BorderColor}"/>
+                            <Setter TargetName="Border" Property="Background" Value="#F1F5F9"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
