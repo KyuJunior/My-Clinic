@@ -86,10 +86,10 @@ namespace MedicalApp
                 switch (mode)
                 {
                     case "/reg":
-                        LaunchStandaloneWindow("Patient Registration Desk", ServiceProvider.GetRequiredService<PatientRegistrationViewModel>(), 500, 720);
+                        LaunchStandaloneWindow("Secretary Window", ServiceProvider.GetRequiredService<PatientRegistrationViewModel>(), 500, 720);
                         return;
                     case "/exam":
-                        LaunchStandaloneWindow("Clinical Examination Room", ServiceProvider.GetRequiredService<ClinicalExamViewModel>(), 950, 720);
+                        LaunchStandaloneWindow("Doctor Window", ServiceProvider.GetRequiredService<ClinicalExamViewModel>(), 950, 720);
                         return;
                     case "/home":
                     case "--home":

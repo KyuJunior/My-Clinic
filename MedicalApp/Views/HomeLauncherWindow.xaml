@@ -58,15 +58,15 @@
                     </Grid.RowDefinitions>
                     
                     <TextBlock Grid.Row="0" Text="&#xE716;" FontFamily="Segoe MDL2 Assets" FontSize="44" Foreground="{StaticResource PrimaryColor}" HorizontalAlignment="Center" Margin="0,15,0,20"/>
-                    <TextBlock Grid.Row="1" Text="Patient Registry" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Grid.Row="1" Text="Secretary" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                     <TextBlock Grid.Row="2" Text="Enroll new patients, search existing records using autocomplete lookup, and queue them to today's active waitlist." 
                                FontSize="12" Foreground="{StaticResource SubtextColor}" TextWrapping="Wrap" TextAlignment="Center" LineHeight="16" Margin="0,0,0,20"/>
                     
-                    <Button Grid.Row="3" Style="{StaticResource ModernButton}" Content="Open Registry Window" Command="{Binding LaunchRegistryCommand}" Height="38" HorizontalAlignment="Stretch"/>
+                    <Button Grid.Row="3" Style="{StaticResource ModernButton}" Content="Open Secretary Window" Command="{Binding LaunchRegistryCommand}" Height="38" HorizontalAlignment="Stretch"/>
                 </Grid>
             </Border>
 
-            <!-- Card 2: Clinical Examination -->
+            <!-- Card 2: Doctor -->
             <Border Grid.Column="1" Style="{StaticResource CardBorder}" Margin="10">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -77,11 +77,11 @@
                     </Grid.RowDefinitions>
                     
                     <TextBlock Grid.Row="0" Text="&#xE1E2;" FontFamily="Segoe MDL2 Assets" FontSize="44" Foreground="{StaticResource PrimaryColor}" HorizontalAlignment="Center" Margin="0,15,0,20"/>
-                    <TextBlock Grid.Row="1" Text="Clinical Examination" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Grid.Row="1" Text="Doctor" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                     <TextBlock Grid.Row="2" Text="Manage waitlisted patients in real-time, record complaints/diagnoses, and direct patients to completed status." 
                                FontSize="12" Foreground="{StaticResource SubtextColor}" TextWrapping="Wrap" TextAlignment="Center" LineHeight="16" Margin="0,0,0,20"/>
                     
-                    <Button Grid.Row="3" Style="{StaticResource ModernButton}" Content="Open Exam Room" Command="{Binding LaunchExamCommand}" Height="38" HorizontalAlignment="Stretch"/>
+                    <Button Grid.Row="3" Style="{StaticResource ModernButton}" Content="Open Doctor Window" Command="{Binding LaunchExamCommand}" Height="38" HorizontalAlignment="Stretch"/>
                 </Grid>
             </Border>
         </Grid>

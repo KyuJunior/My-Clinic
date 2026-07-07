@@ -44,15 +44,15 @@
                     </Grid.RowDefinitions>
                     
                     <TextBlock Grid.Row="0" Text="&#xE716;" FontFamily="Segoe MDL2 Assets" FontSize="48" Foreground="{StaticResource PrimaryColor}" HorizontalAlignment="Center" Margin="0,20,0,25"/>
-                    <TextBlock Grid.Row="1" Text="Patient Registry" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                    <TextBlock Grid.Row="1" Text="Secretary" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
                     <TextBlock Grid.Row="2" Text="Enroll new patients, look up existing patient files with autocomplete search-as-you-type, and send patients to today's active waitlist queue." 
                                FontSize="12" Foreground="{StaticResource SubtextColor}" TextWrapping="Wrap" TextAlignment="Center" LineHeight="18" Margin="0,0,0,25"/>
                     
-                    <Button Grid.Row="3" Style="{StaticResource ModernButton}" Content="Enter Registry" Command="{Binding NavigateToRegistryCommand}" Height="40" HorizontalAlignment="Stretch"/>
+                    <Button Grid.Row="3" Style="{StaticResource ModernButton}" Content="Enter Secretary Room" Command="{Binding NavigateToRegistryCommand}" Height="40" HorizontalAlignment="Stretch"/>
                 </Grid>
             </Border>
 
-            <!-- Card 2: Clinical Examination -->
+            <!-- Card 2: Doctor -->
             <Border Grid.Column="1" Style="{StaticResource CardBorder}" Margin="15">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -63,11 +63,11 @@
                     </Grid.RowDefinitions>
                     
                     <TextBlock Grid.Row="0" Text="&#xE1E2;" FontFamily="Segoe MDL2 Assets" FontSize="48" Foreground="{StaticResource PrimaryColor}" HorizontalAlignment="Center" Margin="0,20,0,25"/>
-                    <TextBlock Grid.Row="1" Text="Clinical Examination" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                    <TextBlock Grid.Row="1" Text="Doctor" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" Margin="0,0,0,12"/>
                     <TextBlock Grid.Row="2" Text="Manage queued patients in real-time, view full clinical exam timeline logs, write notes, and direct patients to completion." 
                                FontSize="12" Foreground="{StaticResource SubtextColor}" TextWrapping="Wrap" TextAlignment="Center" LineHeight="18" Margin="0,0,0,25"/>
                     
-                    <Button Grid.Row="3" Style="{StaticResource ModernButton}" Content="Enter Exam Room" Command="{Binding NavigateToExamCommand}" Height="40" HorizontalAlignment="Stretch"/>
+                    <Button Grid.Row="3" Style="{StaticResource ModernButton}" Content="Enter Doctor Room" Command="{Binding NavigateToExamCommand}" Height="40" HorizontalAlignment="Stretch"/>
                 </Grid>
             </Border>
         </Grid>
