@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace MedicalApp.Models
@@ -10,6 +11,22 @@ namespace MedicalApp.Models
         public string PhysicalExamination { get; set; } = string.Empty;
         public string Diagnosis { get; set; } = string.Empty;
         public string TreatmentPlan { get; set; } = string.Empty;
-        public List<string> PrescribedDrugs { get; set; } = new();
+        public List<PrescribedMedication> PrescribedDrugs { get; set; } = new();
+
+        // Vitals
+        public string VitalsHR { get; set; } = string.Empty;
+        public string VitalsSBP { get; set; } = string.Empty;
+        public string VitalsDBP { get; set; } = string.Empty;
+        public string VitalsRR { get; set; } = string.Empty;
+        public string VitalsSPO2 { get; set; } = string.Empty;
+        public string VitalsTemp { get; set; } = string.Empty;
+        public bool IsVitallyStable { get; set; }
+
+        // Investigation & Imaging
+        public string Investigation { get; set; } = string.Empty;
+        public string Imaging { get; set; } = string.Empty;
+
+        // Return Date
+        public DateTime? ReturnDate { get; set; }
     }
 }

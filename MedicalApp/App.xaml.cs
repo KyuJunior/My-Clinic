@@ -62,10 +62,36 @@ namespace MedicalApp
                     ")"
                 );
 
-                // Add Prescription column to Visits if it doesn't exist
+                // Add columns to Visits if they don't exist
                 await dbContext.Database.ExecuteSqlRawAsync(
-                    "IF COL_LENGTH('dbo.Visits', 'Prescription') IS NULL " +
-                    "ALTER TABLE dbo.Visits ADD Prescription NVARCHAR(MAX) NOT NULL DEFAULT ''"
+                    "IF COL_LENGTH('dbo.Visits', 'Prescription') IS NULL ALTER TABLE dbo.Visits ADD Prescription NVARCHAR(MAX) NOT NULL DEFAULT ''"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Visits', 'VitalsHR') IS NULL ALTER TABLE dbo.Visits ADD VitalsHR NVARCHAR(50) NOT NULL DEFAULT ''"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Visits', 'VitalsSBP') IS NULL ALTER TABLE dbo.Visits ADD VitalsSBP NVARCHAR(50) NOT NULL DEFAULT ''"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Visits', 'VitalsDBP') IS NULL ALTER TABLE dbo.Visits ADD VitalsDBP NVARCHAR(50) NOT NULL DEFAULT ''"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Visits', 'VitalsRR') IS NULL ALTER TABLE dbo.Visits ADD VitalsRR NVARCHAR(50) NOT NULL DEFAULT ''"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Visits', 'VitalsSPO2') IS NULL ALTER TABLE dbo.Visits ADD VitalsSPO2 NVARCHAR(50) NOT NULL DEFAULT ''"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Visits', 'VitalsTemp') IS NULL ALTER TABLE dbo.Visits ADD VitalsTemp NVARCHAR(50) NOT NULL DEFAULT ''"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Visits', 'Investigation') IS NULL ALTER TABLE dbo.Visits ADD Investigation NVARCHAR(200) NOT NULL DEFAULT ''"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Visits', 'Imaging') IS NULL ALTER TABLE dbo.Visits ADD Imaging NVARCHAR(200) NOT NULL DEFAULT ''"
+                );
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF COL_LENGTH('dbo.Visits', 'ReturnDate') IS NULL ALTER TABLE dbo.Visits ADD ReturnDate DATETIME NULL"
                 );
             }
             catch (Exception ex)

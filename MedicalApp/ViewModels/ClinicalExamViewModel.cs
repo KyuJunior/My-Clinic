@@ -72,10 +72,86 @@ namespace MedicalApp.ViewModels
         private bool _isDrugSuggestionsOpen;
 
         [ObservableProperty]
-        private ObservableCollection<string> _prescribedDrugs = new();
+        private ObservableCollection<PrescribedMedication> _prescribedDrugs = new();
 
         [ObservableProperty]
         private string _statusMessage = string.Empty;
+
+        // View Toggling Settings (Show/Hide sections)
+        [ObservableProperty]
+        private bool _showComplaint = true;
+
+        [ObservableProperty]
+        private bool _showPhysicalExam = true;
+
+        [ObservableProperty]
+        private bool _showVitals = true;
+
+        [ObservableProperty]
+        private bool _showInvestigation = true;
+
+        [ObservableProperty]
+        private bool _showDiagnosis = true;
+
+        [ObservableProperty]
+        private bool _showDrugs = true;
+
+        // Vital Signs Fields
+        [ObservableProperty]
+        private string _vitalHR = string.Empty;
+
+        [ObservableProperty]
+        private string _vitalSBP = string.Empty;
+
+        [ObservableProperty]
+        private string _vitalDBP = string.Empty;
+
+        [ObservableProperty]
+        private string _vitalRR = string.Empty;
+
+        [ObservableProperty]
+        private string _vitalSPO2 = string.Empty;
+
+        [ObservableProperty]
+        private string _vitalTemp = string.Empty;
+
+        [ObservableProperty]
+        private bool _isVitallyStable;
+
+        // Investigation & Imaging Fields
+        [ObservableProperty]
+        private string _selectedInvestigation = string.Empty;
+
+        [ObservableProperty]
+        private string _selectedImaging = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _returnDate;
+
+        [ObservableProperty]
+        private ObservableCollection<string> _investigationsList = new()
+        {
+            "CBC (Complete Blood Count)",
+            "HbA1c (Glycated Hemoglobin)",
+            "Lipid Profile (Cholesterol)",
+            "Kidney Function Test (KFT)",
+            "Liver Function Test (LFT)",
+            "Thyroid Profile (TSH)",
+            "Urine Analysis",
+            "None"
+        };
+
+        [ObservableProperty]
+        private ObservableCollection<string> _imagingList = new()
+        {
+            "Echocardiography",
+            "Chest X-Ray",
+            "Electrocardiogram (ECG)",
+            "Abdominal Ultrasound",
+            "Cardiac MRI",
+            "CT Angiography",
+            "None"
+        };
 
         public ClinicalExamViewModel(
             IVisitService visitService, 
@@ -113,6 +189,8 @@ namespace MedicalApp.ViewModels
             _pollingTimer.Tick += OnPollingTimerTick;
             _pollingTimer.Start();
             _ = PollQueueAsync();
+
+            LoadViewSettings();
         }
 
         private async void OnPollingTimerTick(object? sender, EventArgs e)
@@ -219,7 +297,7 @@ namespace MedicalApp.ViewModels
 
             try
             {
-                var rxText = string.Join(Environment.NewLine, PrescribedDrugs);
+                var rxText = string.Join(Environment.NewLine, PrescribedDrugs.Select(d => d.ToString()));
 
                 var visit = new Visit
                 {
@@ -230,6 +308,15 @@ namespace MedicalApp.ViewModels
                     Diagnosis = Diagnosis,
                     TreatmentPlan = TreatmentPlan,
                     Prescription = rxText,
+                    VitalsHR = VitalHR,
+                    VitalsSBP = VitalSBP,
+                    VitalsDBP = VitalDBP,
+                    VitalsRR = VitalRR,
+                    VitalsSPO2 = VitalSPO2,
+                    VitalsTemp = VitalTemp,
+                    Investigation = SelectedInvestigation,
+                    Imaging = SelectedImaging,
+                    ReturnDate = ReturnDate,
                     VisitDate = DateTime.UtcNow
                 };
 
@@ -240,10 +327,10 @@ namespace MedicalApp.ViewModels
                 {
                     foreach (var drug in PrescribedDrugs)
                     {
-                        var exists = await db.Drugs.AnyAsync(d => d.Name == drug);
+                        var exists = await db.Drugs.AnyAsync(d => d.Name == drug.Name);
                         if (!exists)
                         {
-                            db.Drugs.Add(new Drug { Name = drug });
+                            db.Drugs.Add(new Drug { Name = drug.Name });
                         }
                     }
                     await db.SaveChangesAsync();
@@ -359,10 +446,11 @@ namespace MedicalApp.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(DrugSearchText))
             {
-                string drug = DrugSearchText.Trim();
-                if (!PrescribedDrugs.Contains(drug))
+                string drugName = DrugSearchText.Trim();
+                if (!PrescribedDrugs.Any(d => d.Name.Equals(drugName, StringComparison.OrdinalIgnoreCase)))
                 {
-                    PrescribedDrugs.Add(drug);
+                    var med = new PrescribedMedication { Name = drugName };
+                    PrescribedDrugs.Add(med);
                 }
                 DrugSearchText = string.Empty;
                 IsDrugSuggestionsOpen = false;
@@ -380,9 +468,9 @@ namespace MedicalApp.ViewModels
         }
 
         [RelayCommand]
-        public void RemoveDrug(string drug)
+        public void RemoveDrug(PrescribedMedication drug)
         {
-            if (PrescribedDrugs.Contains(drug))
+            if (drug != null && PrescribedDrugs.Contains(drug))
             {
                 PrescribedDrugs.Remove(drug);
             }
@@ -402,7 +490,7 @@ namespace MedicalApp.ViewModels
                 return;
             }
 
-            string rxText = string.Join(Environment.NewLine, PrescribedDrugs);
+            string rxText = string.Join(Environment.NewLine, PrescribedDrugs.Select(d => d.ToString()));
             if (string.IsNullOrWhiteSpace(rxText))
             {
                 rxText = DrugSearchText.Trim();
@@ -494,7 +582,17 @@ namespace MedicalApp.ViewModels
                     PhysicalExamination = PhysicalExamination ?? string.Empty,
                     Diagnosis = Diagnosis ?? string.Empty,
                     TreatmentPlan = TreatmentPlan ?? string.Empty,
-                    PrescribedDrugs = new System.Collections.Generic.List<string>(PrescribedDrugs)
+                    PrescribedDrugs = new System.Collections.Generic.List<PrescribedMedication>(PrescribedDrugs),
+                    VitalsHR = VitalHR ?? string.Empty,
+                    VitalsSBP = VitalSBP ?? string.Empty,
+                    VitalsDBP = VitalDBP ?? string.Empty,
+                    VitalsRR = VitalRR ?? string.Empty,
+                    VitalsSPO2 = VitalSPO2 ?? string.Empty,
+                    VitalsTemp = VitalTemp ?? string.Empty,
+                    IsVitallyStable = IsVitallyStable,
+                    Investigation = SelectedInvestigation ?? string.Empty,
+                    Imaging = SelectedImaging ?? string.Empty,
+                    ReturnDate = ReturnDate
                 };
 
                 string outputJson = JsonSerializer.Serialize(drafts, new JsonSerializerOptions { WriteIndented = true });
@@ -526,8 +624,18 @@ namespace MedicalApp.ViewModels
                         PhysicalExamination = draft.PhysicalExamination;
                         Diagnosis = draft.Diagnosis;
                         TreatmentPlan = draft.TreatmentPlan;
+                        VitalHR = draft.VitalsHR;
+                        VitalSBP = draft.VitalsSBP;
+                        VitalDBP = draft.VitalsDBP;
+                        VitalRR = draft.VitalsRR;
+                        VitalSPO2 = draft.VitalsSPO2;
+                        VitalTemp = draft.VitalsTemp;
+                        IsVitallyStable = draft.IsVitallyStable;
+                        SelectedInvestigation = draft.Investigation;
+                        SelectedImaging = draft.Imaging;
+                        ReturnDate = draft.ReturnDate;
                         
-                        var newCollection = new ObservableCollection<string>(draft.PrescribedDrugs);
+                        var newCollection = new ObservableCollection<PrescribedMedication>(draft.PrescribedDrugs);
                         newCollection.CollectionChanged += (s, e) => TriggerAutoSave();
                         PrescribedDrugs = newCollection;
                         return;
@@ -576,8 +684,18 @@ namespace MedicalApp.ViewModels
             PhysicalExamination = string.Empty;
             Diagnosis = string.Empty;
             TreatmentPlan = string.Empty;
+            VitalHR = string.Empty;
+            VitalSBP = string.Empty;
+            VitalDBP = string.Empty;
+            VitalRR = string.Empty;
+            VitalSPO2 = string.Empty;
+            VitalTemp = string.Empty;
+            IsVitallyStable = false;
+            SelectedInvestigation = string.Empty;
+            SelectedImaging = string.Empty;
+            ReturnDate = null;
             
-            var newCollection = new ObservableCollection<string>();
+            var newCollection = new ObservableCollection<PrescribedMedication>();
             newCollection.CollectionChanged += (s, e) => TriggerAutoSave();
             PrescribedDrugs = newCollection;
         }
@@ -617,6 +735,98 @@ namespace MedicalApp.ViewModels
             }
 
             StatusMessage = $"Captured voice input for {fieldName}.";
+        }
+
+        // View settings load and save
+        private static readonly string SettingsFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "doctor_view_settings.json");
+
+        private void LoadViewSettings()
+        {
+            try
+            {
+                if (File.Exists(SettingsFile))
+                {
+                    string json = File.ReadAllText(SettingsFile);
+                    var settings = JsonSerializer.Deserialize<Dictionary<string, bool>>(json);
+                    if (settings != null)
+                    {
+                        bool val;
+                        if (settings.TryGetValue("ShowComplaint", out val)) ShowComplaint = val;
+                        if (settings.TryGetValue("ShowPhysicalExam", out val)) ShowPhysicalExam = val;
+                        if (settings.TryGetValue("ShowVitals", out val)) ShowVitals = val;
+                        if (settings.TryGetValue("ShowInvestigation", out val)) ShowInvestigation = val;
+                        if (settings.TryGetValue("ShowDiagnosis", out val)) ShowDiagnosis = val;
+                        if (settings.TryGetValue("ShowDrugs", out val)) ShowDrugs = val;
+                    }
+                }
+            }
+            catch
+            {
+                // Fallback to default true values
+            }
+        }
+
+        private void SaveViewSettings()
+        {
+            try
+            {
+                var settings = new Dictionary<string, bool>
+                {
+                    { "ShowComplaint", ShowComplaint },
+                    { "ShowPhysicalExam", ShowPhysicalExam },
+                    { "ShowVitals", ShowVitals },
+                    { "ShowInvestigation", ShowInvestigation },
+                    { "ShowDiagnosis", ShowDiagnosis },
+                    { "ShowDrugs", ShowDrugs }
+                };
+                string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(SettingsFile, json);
+            }
+            catch
+            {
+                // Silently ignore settings save errors
+            }
+        }
+
+        // Changed handlers for auto-saving view/draft fields
+        partial void OnShowComplaintChanged(bool value) => SaveViewSettings();
+        partial void OnShowPhysicalExamChanged(bool value) => SaveViewSettings();
+        partial void OnShowVitalsChanged(bool value) => SaveViewSettings();
+        partial void OnShowInvestigationChanged(bool value) => SaveViewSettings();
+        partial void OnShowDiagnosisChanged(bool value) => SaveViewSettings();
+        partial void OnShowDrugsChanged(bool value) => SaveViewSettings();
+
+        partial void OnVitalHRChanged(string value) => TriggerAutoSave();
+        partial void OnVitalSBPChanged(string value) => TriggerAutoSave();
+        partial void OnVitalDBPChanged(string value) => TriggerAutoSave();
+        partial void OnVitalRRChanged(string value) => TriggerAutoSave();
+        partial void OnVitalSPO2Changed(string value) => TriggerAutoSave();
+        partial void OnVitalTempChanged(string value) => TriggerAutoSave();
+        partial void OnSelectedInvestigationChanged(string value) => TriggerAutoSave();
+        partial void OnSelectedImagingChanged(string value) => TriggerAutoSave();
+        partial void OnReturnDateChanged(DateTime? value) => TriggerAutoSave();
+
+        partial void OnIsVitallyStableChanged(bool value)
+        {
+            if (value)
+            {
+                VitalHR = "75";
+                VitalSBP = "120";
+                VitalDBP = "80";
+                VitalRR = "16";
+                VitalSPO2 = "98";
+                VitalTemp = "37.0";
+            }
+            else
+            {
+                VitalHR = string.Empty;
+                VitalSBP = string.Empty;
+                VitalDBP = string.Empty;
+                VitalRR = string.Empty;
+                VitalSPO2 = string.Empty;
+                VitalTemp = string.Empty;
+            }
+            TriggerAutoSave();
         }
 
         public void Dispose()
