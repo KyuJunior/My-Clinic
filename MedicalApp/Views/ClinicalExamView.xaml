@@ -5,13 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:converters="clr-namespace:MedicalApp.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="1000"
+             d:DesignHeight="700" d:DesignWidth="1100"
              Background="Transparent">
+    
     <UserControl.Resources>
         <converters:NullToBoolConverter x:Key="NullToBoolConverter"/>
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
     </UserControl.Resources>
-    
+
     <Grid Margin="10,15,10,10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Back Navigation Header -->
@@ -45,12 +46,12 @@
             </Grid>
         </Border>
 
-        <!-- Main Workspace (Waitlist Queue + Form + History) -->
+        <!-- Main Workspace (Waitlist Queue + Form + Patient Info Sidebar) -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="260"/> <!-- Waitlist Queue Sidebar -->
-                <ColumnDefinition Width="420"/> <!-- Visit Input Form -->
-                <ColumnDefinition Width="*"/>   <!-- Timeline of Previous Visits -->
+                <ColumnDefinition Width="240"/> <!-- Waitlist Queue Sidebar -->
+                <ColumnDefinition Width="*"/>   <!-- Active Exam Form (Grid) -->
+                <ColumnDefinition Width="290"/> <!-- Patient Info & Timeline Sidebar -->
             </Grid.ColumnDefinitions>
 
             <!-- Column 0: Active Waitlist Queue -->
@@ -80,10 +81,14 @@
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
 
-                                        <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding PatientName}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource TextColor}" TextTrimming="CharacterEllipsis"/>
-                                        
+                                        <!-- Patient Info -->
+                                        <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Patient.Name}" FontWeight="Bold" FontSize="12" Foreground="{StaticResource TextColor}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="0" Grid.Row="1" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,2,0,0">
+                                            <Run Text="{Binding Patient.Age}"/> <Run Text="yrs |"/> <Run Text="{Binding Patient.Gender}"/>
+                                        </TextBlock>
+
                                         <!-- Status Badge -->
-                                        <Border Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" CornerRadius="4" Padding="6,2" Margin="0,5,0,0">
+                                        <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" CornerRadius="4" Padding="6,4" VerticalAlignment="Center">
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <Style.Triggers>
@@ -125,129 +130,150 @@
                 </Grid>
             </Border>
 
-            <!-- Column 1: Current Examination Entry -->
+            <!-- Column 1: Active Examination Form (2-Column Grid) -->
             <Border Grid.Column="1" Style="{StaticResource CardBorder}" Margin="0,0,15,0" VerticalAlignment="Stretch">
                 <Grid>
-                    <!-- Form stack panel (visible when patient is selected) -->
+                    <!-- Form layout (visible when patient is selected) -->
                     <ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding CurrentPatient, Converter={StaticResource NullToVisibilityConverter}}">
-                        <StackPanel>
-                            <TextBlock Text="New Visit Examination" Style="{StaticResource Header2}"/>
-                            <TextBlock Text="Log examination findings and plan for the active patient." Style="{StaticResource Subheading}" Margin="0,0,0,20"/>
+                        <Grid Margin="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/> <!-- Row 1: Complaint & HPI -->
+                                <RowDefinition Height="Auto"/> <!-- Row 2: Exam & Diagnosis -->
+                                <RowDefinition Height="Auto"/> <!-- Row 3: Plan & Rx -->
+                                <RowDefinition Height="Auto"/> <!-- Row 4: Actions -->
+                                <RowDefinition Height="Auto"/> <!-- Row 5: Status -->
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                            <!-- Active Patient Details -->
-                            <Border Background="#F8FAFC" BorderBrush="{StaticResource BorderColor}" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,15">
-                                <Grid>
+                            <!-- Row 1, Col 0: Chief Complaint -->
+                            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,15">
+                                <Grid Margin="0,0,0,5">
+                                    <TextBlock Text="Chief Complaint" Style="{StaticResource Subheading}" VerticalAlignment="Center"/>
+                                    <Button Style="{StaticResource NavButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Center" Width="28" Height="28" Padding="0" 
+                                            Command="{Binding SimulateVoiceInputCommand}" CommandParameter="Complaint"/>
+                                </Grid>
+                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding ChiefComplaint, UpdateSourceTrigger=PropertyChanged}" Height="80" AcceptsReturn="True" TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- Row 1, Col 1: History of Present Illness (HPI) -->
+                            <StackPanel Grid.Row="0" Grid.Column="1" Margin="10,0,0,15">
+                                <Grid Margin="0,0,0,5">
+                                    <TextBlock Text="History of Present Illness (HPI)" Style="{StaticResource Subheading}" VerticalAlignment="Center"/>
+                                    <Button Style="{StaticResource NavButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Center" Width="28" Height="28" Padding="0"
+                                            Command="{Binding SimulateVoiceInputCommand}" CommandParameter="HPI"/>
+                                </Grid>
+                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding HistoryOfPresentIllness, UpdateSourceTrigger=PropertyChanged}" Height="80" AcceptsReturn="True" TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- Row 2, Col 0: Physical Examination -->
+                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,10,15">
+                                <Grid Margin="0,0,0,5">
+                                    <TextBlock Text="Physical Examination Findings" Style="{StaticResource Subheading}" VerticalAlignment="Center"/>
+                                    <Button Style="{StaticResource NavButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Center" Width="28" Height="28" Padding="0"
+                                            Command="{Binding SimulateVoiceInputCommand}" CommandParameter="Exam"/>
+                                </Grid>
+                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding PhysicalExamination, UpdateSourceTrigger=PropertyChanged}" Height="80" AcceptsReturn="True" TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- Row 2, Col 1: Diagnosis -->
+                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,0,15">
+                                <Grid Margin="0,0,0,5">
+                                    <TextBlock Text="Diagnosis" Style="{StaticResource Subheading}" VerticalAlignment="Center"/>
+                                    <Button Style="{StaticResource NavButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Center" Width="28" Height="28" Padding="0"
+                                            Command="{Binding SimulateVoiceInputCommand}" CommandParameter="Diagnosis"/>
+                                </Grid>
+                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Diagnosis, UpdateSourceTrigger=PropertyChanged}" Height="80" AcceptsReturn="True" TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- Row 3, Col 0: Treatment Plan -->
+                            <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,10,15">
+                                <Grid Margin="0,0,0,5">
+                                    <TextBlock Text="Treatment Plan / Notes" Style="{StaticResource Subheading}" VerticalAlignment="Center"/>
+                                    <Button Style="{StaticResource NavButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Center" Width="28" Height="28" Padding="0"
+                                            Command="{Binding SimulateVoiceInputCommand}" CommandParameter="Plan"/>
+                                </Grid>
+                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding TreatmentPlan, UpdateSourceTrigger=PropertyChanged}" Height="120" AcceptsReturn="True" TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- Row 3, Col 1: Prescription (Rx) Builder -->
+                            <StackPanel Grid.Row="2" Grid.Column="1" Margin="10,0,0,15">
+                                <TextBlock Text="Medication Prescription (Rx)" Style="{StaticResource Subheading}" Margin="0,0,0,5"/>
+                                <Grid Margin="0,0,0,10">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="{Binding CurrentPatient.Name}" FontWeight="Bold" FontSize="14" Foreground="{StaticResource PrimaryColor}"/>
-                                        <TextBlock Text="{Binding CurrentPatient.Phone}" FontSize="12" Foreground="{StaticResource SubtextColor}"/>
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12" Foreground="{StaticResource TextColor}">
-                                        <Run Text="{Binding CurrentPatient.Age}"/> <Run Text="yrs,"/> <Run Text="{Binding CurrentPatient.Gender}"/>
-                                    </TextBlock>
-                                </Grid>
-                            </Border>
-
-                            <!-- Chief Complaint -->
-                            <TextBlock Text="Chief Complaint" Style="{StaticResource Subheading}"/>
-                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding ChiefComplaint, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,15"/>
-
-                            <!-- History of Present Illness -->
-                            <TextBlock Text="History of Present Illness (HPI)" Style="{StaticResource Subheading}"/>
-                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding HistoryOfPresentIllness, UpdateSourceTrigger=PropertyChanged}" Height="80" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,15"/>
-
-                            <!-- Physical Examination -->
-                            <TextBlock Text="Physical Examination Findings" Style="{StaticResource Subheading}"/>
-                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding PhysicalExamination, UpdateSourceTrigger=PropertyChanged}" Height="80" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,15"/>
-
-                            <!-- Diagnosis -->
-                            <TextBlock Text="Diagnosis" Style="{StaticResource Subheading}"/>
-                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Diagnosis, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,15"/>
-
-                            <!-- Treatment Plan -->
-                            <TextBlock Text="Treatment Plan / Doctor Notes" Style="{StaticResource Subheading}"/>
-                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding TreatmentPlan, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,15"/>
-
-                            <!-- Rx Medication Autocomplete Builder -->
-                            <TextBlock Text="Medication Prescription (Rx)" Style="{StaticResource Subheading}"/>
-                            
-                            <!-- Search & Add Grid -->
-                            <Grid Margin="0,0,0,10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                
-                                <TextBox x:Name="DrugInput" Style="{StaticResource ModernTextBox}" 
-                                         Text="{Binding DrugSearchText, UpdateSourceTrigger=PropertyChanged}" 
-                                         Tag="Search or type drug name... (e.g. Aspirin)">
-                                    <TextBox.InputBindings>
-                                        <KeyBinding Key="Enter" Command="{Binding AddDrugCommand}"/>
-                                    </TextBox.InputBindings>
-                                </TextBox>
-
-                                <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="Add" 
-                                        Command="{Binding AddDrugCommand}" Margin="10,0,0,0" Padding="15,6"/>
-
-                                <!-- Autocomplete Suggestions Popup -->
-                                <Popup IsOpen="{Binding IsDrugSuggestionsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=DrugInput}" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Slide">
-                                    <Border Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1.5" CornerRadius="8" Width="300" MaxHeight="200" Padding="5">
-                                        <Border.Effect>
-                                            <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.15" ShadowDepth="3"/>
-                                        </Border.Effect>
-                                        <ListBox ItemsSource="{Binding DrugSuggestions}" BorderThickness="0" Background="Transparent" HorizontalContentAlignment="Stretch">
-                                            <ListBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Button Style="{StaticResource NavButton}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,6" Content="{Binding}"
-                                                            Command="{Binding DataContext.SelectSuggestedDrugCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
-                                                </DataTemplate>
-                                            </ListBox.ItemTemplate>
-                                        </ListBox>
-                                    </Border>
-                                </Popup>
-                            </Grid>
-
-                            <!-- Prescribed Drugs List -->
-                            <ItemsControl ItemsSource="{Binding PrescribedDrugs}" Margin="0,0,0,15">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Background="#F1F5F9" CornerRadius="4" Padding="8,4" Margin="0,0,0,5">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.Column="0" Text="{Binding}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="{StaticResource TextColor}"/>
-                                                <Button Grid.Column="1" Style="{StaticResource NavButton}" Width="24" Height="24" Tag="&#xE711;" ToolTip="Remove medication" Padding="0" Foreground="#EF4444"
-                                                        Command="{Binding DataContext.RemoveDrugCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
-                                            </Grid>
+                                    <TextBox x:Name="DrugInput" Style="{StaticResource ModernTextBox}" 
+                                             Text="{Binding DrugSearchText, UpdateSourceTrigger=PropertyChanged}" 
+                                             Tag="Search or type drug name... (e.g. Aspirin)">
+                                        <TextBox.InputBindings>
+                                            <KeyBinding Key="Enter" Command="{Binding AddDrugCommand}"/>
+                                        </TextBox.InputBindings>
+                                    </TextBox>
+                                    <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="Add" 
+                                            Command="{Binding AddDrugCommand}" Margin="10,0,0,0" Padding="15,6"/>
+                                    
+                                    <!-- Autocomplete Popup -->
+                                    <Popup IsOpen="{Binding IsDrugSuggestionsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=DrugInput}" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Slide">
+                                        <Border Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1.5" CornerRadius="8" Width="220" MaxHeight="160" Padding="5">
+                                            <Border.Effect>
+                                                <DropShadowEffect BlurRadius="10" Color="Black" Opacity="0.15" ShadowDepth="3"/>
+                                            </Border.Effect>
+                                            <ListBox ItemsSource="{Binding DrugSuggestions}" BorderThickness="0" Background="Transparent" HorizontalContentAlignment="Stretch">
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Button Style="{StaticResource NavButton}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="8,6" Content="{Binding}"
+                                                                Command="{Binding DataContext.SelectSuggestedDrugCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
                                         </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-
-                            <!-- Action Buttons -->
-                            <StackPanel Margin="0,5,0,0">
-                                <!-- End Exam Session Actions -->
-                                <Button Style="{StaticResource ModernButton}" Content="Complete Visit" Command="{Binding CompleteSessionDoneCommand}" Height="40" Margin="0,0,0,10"/>
-
-                                <!-- Print Actions -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Button Grid.Column="0" Style="{StaticResource ModernButton}" Content="Print Rx (A5)" Command="{Binding PrintActiveRxCommand}" Background="#10B981" BorderBrush="#10B981" Height="40" Margin="0,0,5,0"/>
-                                    <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="Print Summary (A4)" Command="{Binding PrintActiveVisitReportCommand}" Background="#6366F1" BorderBrush="#6366F1" Height="40" Margin="5,0,0,0"/>
+                                    </Popup>
                                 </Grid>
+
+                                <!-- Prescribed Drugs wrap panel -->
+                                <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="1" CornerRadius="6" Background="#F8FAFC" Height="80" Padding="5">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl ItemsSource="{Binding PrescribedDrugs}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="#E2E8F0" CornerRadius="12" Padding="10,4" Margin="3" BorderBrush="#CBD5E1" BorderThickness="1">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding}" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="0,0,5,0"/>
+                                                            <Button Style="{StaticResource NavButton}" Width="16" Height="16" Tag="&#xE711;" ToolTip="Remove" Padding="0" Foreground="#EF4444" FontSize="8"
+                                                                    Command="{Binding DataContext.RemoveDrugCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Border>
                             </StackPanel>
 
-                            <!-- Status Message -->
-                            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource PrimaryColor}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,15,0,0" HorizontalAlignment="Center"/>
-                        </StackPanel>
+                            <!-- Row 4: Action Buttons spanning both columns -->
+                            <Grid Grid.Row="3" Grid.ColumnSpan="2" Margin="0,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="160"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Style="{StaticResource ModernButton}" Content="Complete Visit" Command="{Binding CompleteSessionDoneCommand}" Height="40" Margin="0,0,10,0"/>
+                                <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="Print Rx (A5)" Command="{Binding PrintActiveRxCommand}" Background="#10B981" BorderBrush="#10B981" Height="40" Margin="0,0,10,0"/>
+                                <Button Grid.Column="2" Style="{StaticResource ModernButton}" Content="Print Summary (A4)" Command="{Binding PrintActiveVisitReportCommand}" Background="#6366F1" BorderBrush="#6366F1" Height="40"/>
+                            </Grid>
+
+                            <!-- Row 5: Status Messages -->
+                            <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Text="{Binding StatusMessage}" Foreground="{StaticResource PrimaryColor}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,15,0,0" HorizontalAlignment="Center"/>
+                        </Grid>
                     </ScrollViewer>
 
                     <!-- Placeholder (visible when no patient is selected) -->
@@ -260,95 +286,92 @@
                 </Grid>
             </Border>
 
-            <!-- Column 2: Historical Visits Timeline -->
-            <Border Grid.Column="2" Style="{StaticResource CardBorder}" Margin="15,0,0,0" VerticalAlignment="Stretch">
-                <Grid>
+            <!-- Column 2: Patient Context & Accordion Sidebar (visible only when patient selected) -->
+            <Border Grid.Column="2" Style="{StaticResource CardBorder}" Background="#F8FAFC" VerticalAlignment="Stretch"
+                    Visibility="{Binding CurrentPatient, Converter={StaticResource NullToVisibilityConverter}}">
+                <Grid Margin="5">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/> <!-- Profile block -->
+                        <RowDefinition Height="*"/>    <!-- Scrollable accordion & Info -->
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Text="Visit History Timeline" Style="{StaticResource Header2}"/>
+                    <!-- Profile block -->
+                    <Border Grid.Row="0" Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1.5" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+                        <StackPanel>
+                            <!-- Avatar circle -->
+                            <Border Width="60" Height="60" CornerRadius="30" Background="{StaticResource PrimaryColor}" HorizontalAlignment="Center" Margin="0,0,0,10">
+                                <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="26" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{Binding CurrentPatient.Name}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding CurrentPatient.Gender}" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Center" Margin="0,2,0,5"/>
+                            <TextBlock Text="{Binding CurrentPatient.Phone}" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
 
-                    <!-- Timeline ListBox -->
-                    <ListBox Grid.Row="1" ItemsSource="{Binding VisitHistory}" BorderThickness="0" Background="Transparent" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1.5" Padding="0,15" Margin="0,0,0,5">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-
-                                        <!-- Date and Diagnosis Header -->
-                                        <Grid Grid.Row="0" Margin="0,0,0,8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            
-                                            <TextBlock Grid.Column="0" Text="{Binding Diagnosis, TargetNullValue='Undiagnosed Visit'}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource PrimaryColor}"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding VisitDate, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" FontSize="12" Foreground="{StaticResource SubtextColor}" FontWeight="SemiBold"/>
-                                        </Grid>
-
-                                        <!-- Chief Complaint -->
-                                        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,4">
-                                            <TextBlock Text="Chief Complaint: " FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextColor}"/>
-                                            <TextBlock Text="{Binding ChiefComplaint}" FontSize="13" Foreground="{StaticResource TextColor}" TextWrapping="Wrap"/>
-                                        </StackPanel>
-
-                                        <!-- Physical Exam / Present Illness Details -->
-                                        <Grid Grid.Row="2" Margin="0,0,0,6">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            
-                                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                                                <TextBlock Text="HPI" FontSize="11" FontWeight="Bold" Foreground="{StaticResource SubtextColor}"/>
-                                                <TextBlock Text="{Binding HistoryOfPresentIllness}" FontSize="12" Foreground="{StaticResource TextColor}" TextWrapping="Wrap" Margin="0,2,0,0"/>
-                                            </StackPanel>
-
-                                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                                <TextBlock Text="Physical Exam" FontSize="11" FontWeight="Bold" Foreground="{StaticResource SubtextColor}"/>
-                                                <TextBlock Text="{Binding PhysicalExamination}" FontSize="12" Foreground="{StaticResource TextColor}" TextWrapping="Wrap" Margin="0,2,0,0"/>
-                                            </StackPanel>
-                                        </Grid>
-
-                                        <!-- Treatment Plan & Rx -->
-                                        <Border Grid.Row="3" Background="#F1F5F9" Padding="12,8" CornerRadius="6" Margin="0,6,0,0">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
+                    <!-- Scrollable Sidebar Content -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <!-- Expandable Visits Timeline -->
+                            <TextBlock Text="Visits History" FontWeight="Bold" Foreground="{StaticResource TextColor}" Margin="0,0,0,8"/>
+                            <ItemsControl ItemsSource="{Binding VisitHistory}" Margin="0,0,0,15">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Expander Header="{Binding VisitDate, StringFormat=\{0:dd/MM/yyyy\}}" 
+                                                  Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1" 
+                                                  Margin="0,0,0,6" Padding="5" ExpandDirection="Down">
+                                            <StackPanel Margin="5">
+                                                <TextBlock Text="Diagnosis:" FontWeight="Bold" FontSize="11" Foreground="{StaticResource SubtextColor}"/>
+                                                <TextBlock Text="{Binding Diagnosis, TargetNullValue='No diagnosis'}" FontSize="11" TextWrapping="Wrap" Margin="0,2,0,6"/>
                                                 
-                                                <StackPanel Grid.Column="0">
-                                                    <TextBlock Text="Treatment Plan" FontSize="11" FontWeight="Bold" Foreground="{StaticResource PrimaryColor}"/>
-                                                    <TextBlock Text="{Binding TreatmentPlan}" FontSize="12" Foreground="{StaticResource TextColor}" TextWrapping="Wrap" Margin="0,2,0,5"/>
-                                                    
-                                                    <TextBlock Text="Rx (Prescription)" FontSize="11" FontWeight="Bold" Foreground="{StaticResource PrimaryColor}" Margin="0,5,0,0" Visibility="{Binding Prescription, Converter={StaticResource NullToVisibilityConverter}}"/>
-                                                    <TextBlock Text="{Binding Prescription}" FontSize="12" Foreground="{StaticResource TextColor}" TextWrapping="Wrap" Margin="0,2,0,0" FontWeight="SemiBold" Visibility="{Binding Prescription, Converter={StaticResource NullToVisibilityConverter}}"/>
-                                                </StackPanel>
-
-                                                <!-- Print Buttons for past visits -->
-                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
-                                                    <Button Style="{StaticResource NavButton}" Padding="8,4" Tag="&#xE716;" ToolTip="Print Visit Summary Report (A4)" Width="32" Height="32" Margin="0,0,0,6"
-                                                            Command="{Binding DataContext.PrintVisitReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
-                                                    <Button Style="{StaticResource NavButton}" Padding="8,4" Tag="&#xE716;" ToolTip="Print Prescription Pad (A5)" Width="32" Height="32"
+                                                <TextBlock Text="Chief Complaint:" FontWeight="Bold" FontSize="11" Foreground="{StaticResource SubtextColor}"/>
+                                                <TextBlock Text="{Binding ChiefComplaint}" FontSize="11" TextWrapping="Wrap" Margin="0,2,0,6"/>
+                                                
+                                                <TextBlock Text="Rx Prescribed:" FontWeight="Bold" FontSize="11" Foreground="{StaticResource SubtextColor}"/>
+                                                <TextBlock Text="{Binding Prescription, TargetNullValue='No drugs'}" FontSize="11" TextWrapping="Wrap" Margin="0,2,0,8" FontWeight="SemiBold"/>
+                                                
+                                                <!-- Action Buttons inside Expander -->
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Button Grid.Column="0" Content="Print Pad" FontSize="9" Padding="2" Margin="0,0,3,0"
                                                             Command="{Binding DataContext.PrintVisitRxCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
                                                             Visibility="{Binding Prescription, Converter={StaticResource NullToVisibilityConverter}}"/>
-                                                </StackPanel>
-                                            </Grid>
-                                        </Border>
+                                                    <Button Grid.Column="1" Content="Print Report" FontSize="9" Padding="2" Margin="3,0,0,0"
+                                                            Command="{Binding DataContext.PrintVisitReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Expander>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- General Info Table -->
+                            <TextBlock Text="General Info" FontWeight="Bold" Foreground="{StaticResource TextColor}" Margin="0,0,0,8"/>
+                            <Border Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1.5" CornerRadius="8" Padding="12">
+                                <StackPanel>
+                                    <!-- Age -->
+                                    <Grid Margin="0,0,0,8">
+                                        <TextBlock Text="Age:" Foreground="{StaticResource SubtextColor}" FontSize="12"/>
+                                        <TextBlock Text="{Binding CurrentPatient.Age, StringFormat='\{0\} years'}" Foreground="{StaticResource TextColor}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Right"/>
                                     </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                                    <Border Height="1" Background="{StaticResource BorderColor}" Margin="0,0,0,8"/>
+                                    <!-- Phone -->
+                                    <Grid Margin="0,0,0,8">
+                                        <TextBlock Text="Phone:" Foreground="{StaticResource SubtextColor}" FontSize="12"/>
+                                        <TextBlock Text="{Binding CurrentPatient.Phone}" Foreground="{StaticResource TextColor}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                    <Border Height="1" Background="{StaticResource BorderColor}" Margin="0,0,0,8"/>
+                                    <!-- Registered -->
+                                    <Grid>
+                                        <TextBlock Text="Registered:" Foreground="{StaticResource SubtextColor}" FontSize="12"/>
+                                        <TextBlock Text="{Binding CurrentPatient.CreatedAt, StringFormat='\{0:dd/MM/yyyy\}'}" Foreground="{StaticResource TextColor}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
                 </Grid>
             </Border>
         </Grid>

@@ -582,6 +582,43 @@ namespace MedicalApp.ViewModels
             PrescribedDrugs = newCollection;
         }
 
+        [RelayCommand]
+        public void SimulateVoiceInput(string fieldName)
+        {
+            string simulatedText = fieldName switch
+            {
+                "Complaint" => "Patient complains of chest tightness and shortness of breath.",
+                "HPI" => "Symptoms started 3 days ago, worsening with physical activity.",
+                "Exam" => "Blood pressure 135/85 mmHg, pulse 80 bpm, lungs clear to auscultation.",
+                "Diagnosis" => "Mild essential hypertension.",
+                "Plan" => "Instructed patient on low-sodium diet and scheduled follow-up in two weeks.",
+                _ => string.Empty
+            };
+
+            if (string.IsNullOrEmpty(simulatedText)) return;
+
+            switch (fieldName)
+            {
+                case "Complaint":
+                    ChiefComplaint = string.IsNullOrEmpty(ChiefComplaint) ? simulatedText : $"{ChiefComplaint} {simulatedText}";
+                    break;
+                case "HPI":
+                    HistoryOfPresentIllness = string.IsNullOrEmpty(HistoryOfPresentIllness) ? simulatedText : $"{HistoryOfPresentIllness} {simulatedText}";
+                    break;
+                case "Exam":
+                    PhysicalExamination = string.IsNullOrEmpty(PhysicalExamination) ? simulatedText : $"{PhysicalExamination} {simulatedText}";
+                    break;
+                case "Diagnosis":
+                    Diagnosis = string.IsNullOrEmpty(Diagnosis) ? simulatedText : $"{Diagnosis} {simulatedText}";
+                    break;
+                case "Plan":
+                    TreatmentPlan = string.IsNullOrEmpty(TreatmentPlan) ? simulatedText : $"{TreatmentPlan} {simulatedText}";
+                    break;
+            }
+
+            StatusMessage = $"Captured voice input for {fieldName}.";
+        }
+
         public void Dispose()
         {
             _pollingTimer.Stop();
