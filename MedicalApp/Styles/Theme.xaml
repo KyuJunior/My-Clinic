@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
     <!-- Color Palette -->
     <SolidColorBrush x:Key="PrimaryColor" Color="#0D9488"/> <!-- Teal 600 -->
@@ -129,13 +130,19 @@
                         <Grid Margin="2">
                             <!-- Watermark/Placeholder -->
                             <TextBlock x:Name="Watermark" 
-                                       Text="{TemplateBinding Tag}" 
                                        Foreground="{StaticResource SubtextColor}" 
                                        FontSize="{TemplateBinding FontSize}"
                                        VerticalAlignment="Center" 
                                        Margin="8,0,0,0"
                                        IsHitTestVisible="False" 
-                                       Visibility="Collapsed"/>
+                                       Visibility="Collapsed">
+                                <TextBlock.Text>
+                                    <PriorityBinding>
+                                        <Binding Path="(materialDesign:HintAssist.Hint)" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                        <Binding Path="Tag" RelativeSource="{RelativeSource TemplatedParent}"/>
+                                    </PriorityBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
                             <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>

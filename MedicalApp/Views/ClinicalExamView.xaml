@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:converters="clr-namespace:MedicalApp.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1100"
              Background="Transparent">
@@ -186,7 +187,7 @@
                         </Grid>
 
                         <!-- Scrollable Cards content -->
-                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Style="{StaticResource MaterialDesignScrollViewer}">
                             <Grid Margin="5">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1.2*"/> <!-- Column 0: Clinical Notes & Diagnosis -->
@@ -202,7 +203,7 @@
                                             <StackPanel Margin="0,0,0,10">
                                                 <TextBlock Text="Chief Complaint" Style="{StaticResource Subheading}" Margin="0,0,0,5"/>
                                                 <Grid>
-                                                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding ChiefComplaint, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8"/>
+                                                    <TextBox Style="{StaticResource ModernTextBox}" materialDesign:HintAssist.Hint="Type details here..." Text="{Binding ChiefComplaint, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8"/>
                                                     <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
                                                             Command="{Binding SimulateVoiceInputCommand}" CommandParameter="Complaint"/>
                                                 </Grid>
@@ -212,7 +213,7 @@
                                             <StackPanel>
                                                 <TextBlock Text="History of Present Illness (HPI)" Style="{StaticResource Subheading}" Margin="0,0,0,5"/>
                                                 <Grid>
-                                                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding HistoryOfPresentIllness, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8"/>
+                                                    <TextBox Style="{StaticResource ModernTextBox}" materialDesign:HintAssist.Hint="Type details here..." Text="{Binding HistoryOfPresentIllness, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8"/>
                                                     <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
                                                             Command="{Binding SimulateVoiceInputCommand}" CommandParameter="HPI"/>
                                                 </Grid>
@@ -611,95 +612,95 @@
                     </Border>
 
                     <!-- Scrollable Sidebar Content -->
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Style="{StaticResource MaterialDesignScrollViewer}">
                         <StackPanel>
                             <!-- General Patient Info Expander -->
                             <Expander Header="General Medical Info (الملف الطبي العام)" IsExpanded="True"
                                       Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1" 
                                       Margin="0,0,0,15" Padding="10" ExpandDirection="Down">
-                                <StackPanel Margin="5">
+                                <StackPanel Margin="5" Grid.IsSharedSizeScope="True">
                                     <!-- Blood Group -->
-                                    <Grid Margin="0,0,0,10">
+                                    <Grid Margin="0,0,0,10" FlowDirection="RightToLeft">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="3*"/>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="1" Text="فصيلة الدم :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right"/>
-                                        <TextBlock Grid.Column="0" Text="{Binding CurrentPatient.BloodGroup, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="فصيلة الدم :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.BloodGroup, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
                                     </Grid>
 
                                     <!-- Allergy -->
-                                    <Grid Margin="0,0,0,10">
+                                    <Grid Margin="0,0,0,10" FlowDirection="RightToLeft">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="3*"/>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="1" Text="الحساسية :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right"/>
-                                        <TextBlock Grid.Column="0" Text="{Binding CurrentPatient.Allergy, TargetNullValue='لا يوجد'}" FontSize="12" FontWeight="Bold" Foreground="#EF4444" HorizontalAlignment="Left" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="0" Text="الحساسية :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Allergy, TargetNullValue='لا يوجد'}" FontSize="12" FontWeight="Bold" Foreground="#EF4444" HorizontalAlignment="Left" TextWrapping="Wrap"/>
                                     </Grid>
 
                                     <!-- Weight -->
-                                    <Grid Margin="0,0,0,10">
+                                    <Grid Margin="0,0,0,10" FlowDirection="RightToLeft">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="3*"/>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="1" Text="الوزن :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right"/>
-                                        <TextBlock Grid.Column="0" Text="{Binding CurrentPatient.Weight, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="الوزن :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Weight, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
                                     </Grid>
 
                                     <!-- Height -->
-                                    <Grid Margin="0,0,0,10">
+                                    <Grid Margin="0,0,0,10" FlowDirection="RightToLeft">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="3*"/>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="1" Text="الطول :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right"/>
-                                        <TextBlock Grid.Column="0" Text="{Binding CurrentPatient.Height, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="الطول :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Height, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
                                     </Grid>
 
                                     <!-- Smoking -->
-                                    <Grid Margin="0,0,0,10">
+                                    <Grid Margin="0,0,0,10" FlowDirection="RightToLeft">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="3*"/>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="1" Text="التدخين :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right"/>
-                                        <TextBlock Grid.Column="0" Text="{Binding CurrentPatient.Smoking, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="التدخين :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Smoking, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
                                     </Grid>
 
                                     <!-- Alcohol -->
-                                    <Grid Margin="0,0,0,10">
+                                    <Grid Margin="0,0,0,10" FlowDirection="RightToLeft">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="3*"/>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="1" Text="الكحول :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right"/>
-                                        <TextBlock Grid.Column="0" Text="{Binding CurrentPatient.Alcohol, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="الكحول :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Alcohol, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
                                     </Grid>
 
                                     <!-- Referred By -->
-                                    <Grid Margin="0,0,0,10">
+                                    <Grid Margin="0,0,0,10" FlowDirection="RightToLeft">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="3*"/>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="1" Text="من طرف :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right"/>
-                                        <TextBlock Grid.Column="0" Text="{Binding CurrentPatient.ReferredBy, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="من طرف :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.ReferredBy, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
                                     </Grid>
 
                                     <!-- Marital Status -->
-                                    <Grid Margin="0,0,0,10">
+                                    <Grid Margin="0,0,0,10" FlowDirection="RightToLeft">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="3*"/>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="1" Text="الحالة الزوجية :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right"/>
-                                        <TextBlock Grid.Column="0" Text="{Binding CurrentPatient.MaritalStatus, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="الحالة الزوجية :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.MaritalStatus, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
                                     </Grid>
 
                                     <!-- General Notes -->
-                                    <StackPanel Margin="0,5,0,0">
+                                    <StackPanel Margin="0,5,0,0" FlowDirection="RightToLeft">
                                         <TextBlock Text="ملاحظات عامة :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
                                         <TextBlock Text="{Binding CurrentPatient.Notes, TargetNullValue='لا يوجد ملاحظات'}" FontSize="12" TextWrapping="Wrap" Foreground="{StaticResource TextColor}" TextAlignment="Right" HorizontalAlignment="Right"/>
                                     </StackPanel>
