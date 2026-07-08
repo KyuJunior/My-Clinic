@@ -647,13 +647,13 @@
                                                                         Command="{Binding DataContext.RemoveDrugCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
 
                                                                 <!-- Name -->
-                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,10,0"/>
+                                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,10,0"/>
 
                                                                 <!-- Dose -->
-                                                                <TextBox Grid.Column="2" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Text="{Binding Dose, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="5,2" Margin="0,0,5,0" VerticalContentAlignment="Center"/>
+                                                                <TextBox Grid.Column="2" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Text="{Binding Dose, UpdateSourceTrigger=PropertyChanged}" Height="36" Padding="8,4" Margin="0,0,5,0" VerticalContentAlignment="Center"/>
 
                                                                 <!-- Type Dropdown -->
-                                                                <ComboBox Grid.Column="3" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="28" Margin="0,0,5,0" SelectedValue="{Binding Type}" SelectedValuePath="Content" VerticalContentAlignment="Center" Background="White">
+                                                                <ComboBox Grid.Column="3" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="36" Padding="8,4" Margin="0,0,5,0" SelectedValue="{Binding Type}" SelectedValuePath="Content" VerticalContentAlignment="Center" Background="White">
                                                                     <ComboBox.ItemContainerStyle>
                                                                         <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
                                                                             <Setter Property="Padding" Value="10,6"/>
@@ -669,7 +669,7 @@
                                                                 </ComboBox>
 
                                                                 <!-- Time Dropdown -->
-                                                                <ComboBox Grid.Column="4" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="28" Margin="0,0,5,0" SelectedValue="{Binding Time}" SelectedValuePath="Content" VerticalContentAlignment="Center" Background="White">
+                                                                <ComboBox Grid.Column="4" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="36" Padding="8,4" Margin="0,0,5,0" SelectedValue="{Binding Time}" SelectedValuePath="Content" VerticalContentAlignment="Center" Background="White">
                                                                     <ComboBox.ItemContainerStyle>
                                                                         <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
                                                                             <Setter Property="Padding" Value="10,6"/>
@@ -686,7 +686,7 @@
                                                                 </ComboBox>
 
                                                                 <!-- Note -->
-                                                                <TextBox Grid.Column="5" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="5,2" VerticalContentAlignment="Center"/>
+                                                                <TextBox Grid.Column="5" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" Height="36" Padding="8,4" VerticalContentAlignment="Center"/>
                                                             </Grid>
                                                         </Border>
                                                     </DataTemplate>
@@ -756,14 +756,10 @@
                             <Expander IsExpanded="True" Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1" 
                                       Margin="0,0,0,15" Padding="10" ExpandDirection="Down">
                                 <Expander.Header>
-                                    <Grid HorizontalAlignment="Stretch">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="General Medical Info" FontWeight="Bold" Foreground="{StaticResource TextColor}" FontSize="12" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="1" Text="الملف الطبي العام" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="8,0,0,0" VerticalAlignment="Center" FlowDirection="RightToLeft"/>
-                                    </Grid>
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                                        <TextBlock Text="General Medical Info" FontWeight="Bold" Foreground="{StaticResource TextColor}" FontSize="12" Margin="0,0,0,2"/>
+                                        <TextBlock Text="الملف الطبي العام" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0"/>
+                                    </StackPanel>
                                 </Expander.Header>
                                 <StackPanel Margin="5" Grid.IsSharedSizeScope="True">
                                     <!-- Blood Group -->
