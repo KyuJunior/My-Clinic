@@ -10,7 +10,11 @@ namespace MedicalApp.Converters
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             bool hasValue = value != null;
-            if (parameter != null && parameter.ToString()?.ToLower() == "inverse")
+            if (value is string str)
+            {
+                hasValue = !string.IsNullOrWhiteSpace(str);
+            }
+            if (parameter != null && (parameter.ToString()?.ToLower() == "inverse" || parameter.ToString()?.ToLower() == "invert"))
             {
                 return hasValue ? Visibility.Collapsed : Visibility.Visible;
             }

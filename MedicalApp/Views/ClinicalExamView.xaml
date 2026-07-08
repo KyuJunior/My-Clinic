@@ -347,79 +347,125 @@
 
                                     <!-- Investigation & Imaging Card -->
                                     <Border Style="{StaticResource CardBorder}" Margin="0,0,0,12" Visibility="{Binding ShowInvestigation, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                        <StackPanel>                                            <!-- Investigation -->
+                                        <StackPanel>
                                             <StackPanel Margin="0,0,0,12">
                                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                                                     <TextBlock Text="&#xE9F9;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="{StaticResource PrimaryColor}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                                    <TextBlock Text="Investigation" Style="{StaticResource Subheading}" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Investigations" Style="{StaticResource Subheading}" VerticalAlignment="Center"/>
                                                 </StackPanel>
-                                                <ComboBox ItemsSource="{Binding InvestigationsList}" SelectedItem="{Binding SelectedInvestigation}" Height="36" Margin="0,0,0,10" VerticalContentAlignment="Center"/>
-                                                <Grid>
+                                                <Grid Margin="0,0,0,10">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <Button Grid.Column="0" Style="{StaticResource SecondaryButton}" Content="Download" Padding="0,5" FontSize="11" Margin="0,0,4,0"/>
-                                                    <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="Upload File" Command="{Binding UploadInvestigationAttachmentCommand}" Padding="0,5" FontSize="11" Margin="4,0,4,0"/>
-                                                    <Button Grid.Column="2" Style="{StaticResource SecondaryButton}" Content="Print" Padding="0,5" FontSize="11" Margin="4,0,0,0"/>
+                                                    <ComboBox Grid.Column="0" ItemsSource="{Binding InvestigationsList}" SelectedItem="{Binding SelectedInvestigation}" Height="36" VerticalContentAlignment="Center" Margin="0,0,6,0"/>
+                                                    <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="Add" Command="{Binding AddInvestigationCommand}" Height="36" Padding="15,0"/>
                                                 </Grid>
 
-                                                <!-- Attachment link info if uploaded -->
-                                                <Border Background="#F1F5F9" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Padding="12,8" Margin="0,8,0,0"
-                                                        Visibility="{Binding InvestigationAttachmentPath, Converter={StaticResource NullToVisibilityConverter}}">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <TextBlock Grid.Column="0" Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Foreground="#0284C7" Margin="0,0,8,0"/>
-                                                        <Button Grid.Column="1" Content="{Binding InvestigationAttachmentName}" Style="{StaticResource LinkButton}"
-                                                                Command="{Binding OpenAttachmentCommand}" CommandParameter="{Binding InvestigationAttachmentPath}"/>
-                                                        <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="20" Height="20" Tag="&#xE711;" ToolTip="Remove attachment" Foreground="#EF4444" FontSize="10"
-                                                                Command="{Binding RemoveInvestigationAttachmentCommand}"/>
-                                                    </Grid>
-                                                </Border>
-                                            </StackPanel>
+                                                <!-- Investigation items list -->
+                                                <ItemsControl ItemsSource="{Binding AddedInvestigations}">
+                                                    <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,8" Background="#F8FAFC">
+                                                            <Grid>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto"/>
+                                                                    <RowDefinition Height="Auto"/>
+                                                                </Grid.RowDefinitions>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                
+                                                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="{StaticResource TextColor}"/>
+                                                                <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource IconButton}" Tag="&#xE711;" ToolTip="Remove investigation" Foreground="#EF4444" FontSize="11" Width="20" Height="20"
+                                                                        Command="{Binding DataContext.RemoveInvestigationCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
 
-                                            <Separator Margin="0,0,0,12"/>
-
-                                            <!-- Imaging -->
-                                            <StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                                                    <TextBlock Text="&#xEC7C;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="{StaticResource PrimaryColor}" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                                    <TextBlock Text="Imaging" Style="{StaticResource Subheading}" VerticalAlignment="Center"/>
-                                                </StackPanel>
-                                                <ComboBox ItemsSource="{Binding ImagingList}" SelectedItem="{Binding SelectedImaging}" Height="36" Margin="0,0,0,10" VerticalContentAlignment="Center"/>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Button Grid.Column="0" Style="{StaticResource SecondaryButton}" Content="Upload File" Command="{Binding UploadImagingAttachmentCommand}" Padding="0,5" FontSize="11" Margin="0,0,4,0"/>
-                                                    <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="Print" Padding="0,5" FontSize="11" Margin="4,0,0,0"/>
-                                                </Grid>
-
-                                                <!-- Attachment link info if uploaded -->
-                                                <Border Background="#F1F5F9" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Padding="12,8" Margin="0,8,0,0"
-                                                        Visibility="{Binding ImagingAttachmentPath, Converter={StaticResource NullToVisibilityConverter}}">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <TextBlock Grid.Column="0" Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Foreground="#0284C7" Margin="0,0,8,0"/>
-                                                        <Button Grid.Column="1" Content="{Binding ImagingAttachmentName}" Style="{StaticResource LinkButton}"
-                                                                Command="{Binding OpenAttachmentCommand}" CommandParameter="{Binding ImagingAttachmentPath}"/>
-                                                        <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="20" Height="20" Tag="&#xE711;" ToolTip="Remove attachment" Foreground="#EF4444" FontSize="10"
-                                                                Command="{Binding RemoveImagingAttachmentCommand}"/>
-                                                    </Grid>
-                                                </Border>
-                                            </StackPanel>
+                                                                <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,6,0,0">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    
+                                                                    <Button Grid.Column="0" Style="{StaticResource LinkButton}" Content="Attach File" Command="{Binding DataContext.UploadInvestigationFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Foreground="{StaticResource PrimaryColor}" FontSize="11" Margin="0,0,10,0"
+                                                                            Visibility="{Binding AttachmentPath, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=inverse}"/>
+                                                                    
+                                                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Visibility="{Binding AttachmentPath, Converter={StaticResource NullToVisibilityConverter}}">
+                                                                        <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Foreground="#0284C7" Margin="0,0,6,0" FontSize="11"/>
+                                                                        <Button Content="{Binding AttachmentName}" Style="{StaticResource LinkButton}"
+                                                                                Command="{Binding DataContext.OpenAttachmentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding AttachmentPath}" MaxWidth="150" HorizontalAlignment="Left"/>
+                                                                        <Button Style="{StaticResource IconButton}" Tag="&#xE711;" ToolTip="Remove attachment" Foreground="#EF4444" FontSize="10" Width="18" Height="18" Margin="6,0,0,0"
+                                                                                Command="{Binding DataContext.RemoveInvestigationFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                                    </StackPanel>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
                                         </StackPanel>
-                                    </Border>
+
+                                        <Separator Margin="0,0,0,12"/>
+
+                                        <!-- Imaging -->
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                                <TextBlock Text="&#xEC7C;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="{StaticResource PrimaryColor}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                <TextBlock Text="Imaging" Style="{StaticResource Subheading}" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                            <Grid Margin="0,0,0,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ComboBox Grid.Column="0" ItemsSource="{Binding ImagingList}" SelectedItem="{Binding SelectedImaging}" Height="36" VerticalContentAlignment="Center" Margin="0,0,6,0"/>
+                                                <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="Add" Command="{Binding AddImagingCommand}" Height="36" Padding="15,0"/>
+                                            </Grid>
+
+                                            <!-- Imaging items list -->
+                                            <ItemsControl ItemsSource="{Binding AddedImagings}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,8" Background="#F8FAFC">
+                                                            <Grid>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto"/>
+                                                                    <RowDefinition Height="Auto"/>
+                                                                </Grid.RowDefinitions>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                
+                                                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="{StaticResource TextColor}"/>
+                                                                <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource IconButton}" Tag="&#xE711;" ToolTip="Remove imaging" Foreground="#EF4444" FontSize="11" Width="20" Height="20"
+                                                                        Command="{Binding DataContext.RemoveImagingCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+
+                                                                <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,6,0,0">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    
+                                                                    <Button Grid.Column="0" Style="{StaticResource LinkButton}" Content="Attach File" Command="{Binding DataContext.UploadImagingFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Foreground="{StaticResource PrimaryColor}" FontSize="11" Margin="0,0,10,0"
+                                                                            Visibility="{Binding AttachmentPath, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=inverse}"/>
+                                                                    
+                                                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Visibility="{Binding AttachmentPath, Converter={StaticResource NullToVisibilityConverter}}">
+                                                                        <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Foreground="#0284C7" Margin="0,0,6,0" FontSize="11"/>
+                                                                        <Button Content="{Binding AttachmentName}" Style="{StaticResource LinkButton}"
+                                                                                Command="{Binding DataContext.OpenAttachmentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding AttachmentPath}" MaxWidth="150" HorizontalAlignment="Left"/>
+                                                                        <Button Style="{StaticResource IconButton}" Tag="&#xE711;" ToolTip="Remove attachment" Foreground="#EF4444" FontSize="10" Width="18" Height="18" Margin="6,0,0,0"
+                                                                                Command="{Binding DataContext.RemoveImagingFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                                    </StackPanel>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
 
                                     <!-- Drugs Card -->
                                     <Border Style="{StaticResource CardBorder}" Margin="0,0,0,12" Visibility="{Binding ShowDrugs, Converter={StaticResource BooleanToVisibilityConverter}}">

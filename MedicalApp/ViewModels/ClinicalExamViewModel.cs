@@ -135,11 +135,9 @@ namespace MedicalApp.ViewModels
         private DateTime? _returnDate;
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(InvestigationAttachmentName))]
         private string _investigationAttachmentPath = string.Empty;
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(ImagingAttachmentName))]
         private string _imagingAttachmentPath = string.Empty;
 
         public string InvestigationAttachmentName => string.IsNullOrWhiteSpace(InvestigationAttachmentPath) 
@@ -149,6 +147,12 @@ namespace MedicalApp.ViewModels
         public string ImagingAttachmentName => string.IsNullOrWhiteSpace(ImagingAttachmentPath) 
             ? string.Empty 
             : Path.GetFileName(ImagingAttachmentPath);
+
+        [ObservableProperty]
+        private ObservableCollection<ClinicalAttachment> _addedInvestigations = new();
+
+        [ObservableProperty]
+        private ObservableCollection<ClinicalAttachment> _addedImagings = new();
 
         [ObservableProperty]
         private ObservableCollection<string> _investigationsList = new()
@@ -191,6 +195,8 @@ namespace MedicalApp.ViewModels
             _dbContextFactory = dbContextFactory;
 
             _prescribedDrugs.CollectionChanged += (s, e) => TriggerAutoSave();
+            _addedInvestigations.CollectionChanged += (s, e) => TriggerAutoSave();
+            _addedImagings.CollectionChanged += (s, e) => TriggerAutoSave();
 
             // Load initial patient context and subscribe to selection updates
             CurrentPatient = _sharedStateService.CurrentPatient;
@@ -343,11 +349,11 @@ namespace MedicalApp.ViewModels
                         existingVisit.VitalsRR = VitalRR;
                         existingVisit.VitalsSPO2 = VitalSPO2;
                         existingVisit.VitalsTemp = VitalTemp;
-                        existingVisit.Investigation = SelectedInvestigation;
-                        existingVisit.Imaging = SelectedImaging;
+                        existingVisit.Investigation = string.Join(", ", AddedInvestigations.Select(x => x.Name));
+                        existingVisit.Imaging = string.Join(", ", AddedImagings.Select(x => x.Name));
                         existingVisit.ReturnDate = ReturnDate;
-                        existingVisit.InvestigationAttachmentPath = InvestigationAttachmentPath;
-                        existingVisit.ImagingAttachmentPath = ImagingAttachmentPath;
+                        existingVisit.InvestigationAttachmentPath = string.Join(";", AddedInvestigations.Select(x => x.AttachmentPath));
+                        existingVisit.ImagingAttachmentPath = string.Join(";", AddedImagings.Select(x => x.AttachmentPath));
 
                         db.Visits.Update(existingVisit);
                     }
@@ -368,11 +374,11 @@ namespace MedicalApp.ViewModels
                             VitalsRR = VitalRR,
                             VitalsSPO2 = VitalSPO2,
                             VitalsTemp = VitalTemp,
-                            Investigation = SelectedInvestigation,
-                            Imaging = SelectedImaging,
+                            Investigation = string.Join(", ", AddedInvestigations.Select(x => x.Name)),
+                            Imaging = string.Join(", ", AddedImagings.Select(x => x.Name)),
                             ReturnDate = ReturnDate,
-                            InvestigationAttachmentPath = InvestigationAttachmentPath,
-                            ImagingAttachmentPath = ImagingAttachmentPath,
+                            InvestigationAttachmentPath = string.Join(";", AddedInvestigations.Select(x => x.AttachmentPath)),
+                            ImagingAttachmentPath = string.Join(";", AddedImagings.Select(x => x.AttachmentPath)),
                             VisitDate = DateTime.UtcNow
                         };
                         await db.Visits.AddAsync(visit);
@@ -698,6 +704,8 @@ namespace MedicalApp.ViewModels
                     IsVitallyStable = IsVitallyStable,
                     Investigation = SelectedInvestigation ?? string.Empty,
                     Imaging = SelectedImaging ?? string.Empty,
+                    Investigations = new List<ClinicalAttachment>(AddedInvestigations),
+                    Imagings = new List<ClinicalAttachment>(AddedImagings),
                     ReturnDate = ReturnDate,
                     InvestigationAttachmentPath = InvestigationAttachmentPath ?? string.Empty,
                     ImagingAttachmentPath = ImagingAttachmentPath ?? string.Empty
@@ -744,6 +752,45 @@ namespace MedicalApp.ViewModels
                         ReturnDate = draft.ReturnDate;
                         InvestigationAttachmentPath = draft.InvestigationAttachmentPath;
                         ImagingAttachmentPath = draft.ImagingAttachmentPath;
+
+                        // Legacy draft parsing
+                        if ((draft.Investigations == null || draft.Investigations.Count == 0) && !string.IsNullOrEmpty(draft.Investigation))
+                        {
+                            var names = draft.Investigation.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+                            var paths = (draft.InvestigationAttachmentPath ?? string.Empty).Split(new[] { ";" }, StringSplitOptions.None);
+                            draft.Investigations = new List<ClinicalAttachment>();
+                            for (int i = 0; i < names.Length; i++)
+                            {
+                                draft.Investigations.Add(new ClinicalAttachment 
+                                { 
+                                    Name = names[i], 
+                                    AttachmentPath = i < paths.Length ? paths[i] : string.Empty 
+                                });
+                            }
+                        }
+
+                        if ((draft.Imagings == null || draft.Imagings.Count == 0) && !string.IsNullOrEmpty(draft.Imaging))
+                        {
+                            var names = draft.Imaging.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+                            var paths = (draft.ImagingAttachmentPath ?? string.Empty).Split(new[] { ";" }, StringSplitOptions.None);
+                            draft.Imagings = new List<ClinicalAttachment>();
+                            for (int i = 0; i < names.Length; i++)
+                            {
+                                draft.Imagings.Add(new ClinicalAttachment 
+                                { 
+                                    Name = names[i], 
+                                    AttachmentPath = i < paths.Length ? paths[i] : string.Empty 
+                                });
+                            }
+                        }
+
+                        var newInvestigations = new ObservableCollection<ClinicalAttachment>(draft.Investigations ?? new List<ClinicalAttachment>());
+                        newInvestigations.CollectionChanged += (s, e) => TriggerAutoSave();
+                        AddedInvestigations = newInvestigations;
+
+                        var newImagings = new ObservableCollection<ClinicalAttachment>(draft.Imagings ?? new List<ClinicalAttachment>());
+                        newImagings.CollectionChanged += (s, e) => TriggerAutoSave();
+                        AddedImagings = newImagings;
                         
                         var newCollection = new ObservableCollection<PrescribedMedication>(draft.PrescribedDrugs);
                         newCollection.CollectionChanged += (s, e) => TriggerAutoSave();
@@ -810,6 +857,14 @@ namespace MedicalApp.ViewModels
             var newCollection = new ObservableCollection<PrescribedMedication>();
             newCollection.CollectionChanged += (s, e) => TriggerAutoSave();
             PrescribedDrugs = newCollection;
+
+            var newInvestigations = new ObservableCollection<ClinicalAttachment>();
+            newInvestigations.CollectionChanged += (s, e) => TriggerAutoSave();
+            AddedInvestigations = newInvestigations;
+
+            var newImagings = new ObservableCollection<ClinicalAttachment>();
+            newImagings.CollectionChanged += (s, e) => TriggerAutoSave();
+            AddedImagings = newImagings;
         }
 
         [RelayCommand]
@@ -1063,8 +1118,173 @@ namespace MedicalApp.ViewModels
             }
         }
 
-        partial void OnInvestigationAttachmentPathChanged(string value) => TriggerAutoSave();
-        partial void OnImagingAttachmentPathChanged(string value) => TriggerAutoSave();
+        [RelayCommand]
+        public void AddInvestigation()
+        {
+            if (!string.IsNullOrWhiteSpace(SelectedInvestigation) && SelectedInvestigation != "None")
+            {
+                string name = SelectedInvestigation.Trim();
+                if (!AddedInvestigations.Any(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    AddedInvestigations.Add(new ClinicalAttachment { Name = name });
+                }
+                SelectedInvestigation = string.Empty;
+            }
+        }
+
+        [RelayCommand]
+        public void AddImaging()
+        {
+            if (!string.IsNullOrWhiteSpace(SelectedImaging) && SelectedImaging != "None")
+            {
+                string name = SelectedImaging.Trim();
+                if (!AddedImagings.Any(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    AddedImagings.Add(new ClinicalAttachment { Name = name });
+                }
+                SelectedImaging = string.Empty;
+            }
+        }
+
+        [RelayCommand]
+        public void RemoveInvestigation(ClinicalAttachment item)
+        {
+            if (item != null && AddedInvestigations.Contains(item))
+            {
+                if (!string.IsNullOrEmpty(item.AttachmentPath) && File.Exists(item.AttachmentPath))
+                {
+                    try { File.Delete(item.AttachmentPath); } catch {}
+                }
+                AddedInvestigations.Remove(item);
+            }
+        }
+
+        [RelayCommand]
+        public void RemoveImaging(ClinicalAttachment item)
+        {
+            if (item != null && AddedImagings.Contains(item))
+            {
+                if (!string.IsNullOrEmpty(item.AttachmentPath) && File.Exists(item.AttachmentPath))
+                {
+                    try { File.Delete(item.AttachmentPath); } catch {}
+                }
+                AddedImagings.Remove(item);
+            }
+        }
+
+        [RelayCommand]
+        public void UploadInvestigationFile(ClinicalAttachment item)
+        {
+            if (item == null) return;
+
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "All Files (*.*)|*.*|Image Files (*.png;*.jpg;*.jpeg;*.gif)|*.png;*.jpg;*.jpeg;*.gif|PDF Files (*.pdf)|*.pdf|Excel Files (*.xls;*.xlsx)|*.xls;*.xlsx"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    var sourcePath = openFileDialog.FileName;
+                    var extension = Path.GetExtension(sourcePath);
+                    var uploadsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Uploads");
+                    if (!Directory.Exists(uploadsDir))
+                    {
+                        Directory.CreateDirectory(uploadsDir);
+                    }
+
+                    var uniqueName = $"investigation_{Guid.NewGuid()}{extension}";
+                    var destPath = Path.Combine(uploadsDir, uniqueName);
+                    File.Copy(sourcePath, destPath, true);
+
+                    // Remove old file if it exists
+                    if (!string.IsNullOrEmpty(item.AttachmentPath) && File.Exists(item.AttachmentPath))
+                    {
+                        try { File.Delete(item.AttachmentPath); } catch {}
+                    }
+
+                    item.AttachmentPath = destPath;
+                    StatusMessage = "Investigation attachment uploaded successfully!";
+                    TriggerAutoSave();
+                }
+                catch (Exception ex)
+                {
+                    StatusMessage = $"Error uploading file: {ex.Message}";
+                }
+            }
+        }
+
+        [RelayCommand]
+        public void RemoveInvestigationFile(ClinicalAttachment item)
+        {
+            if (item == null) return;
+
+            if (!string.IsNullOrEmpty(item.AttachmentPath) && File.Exists(item.AttachmentPath))
+            {
+                try { File.Delete(item.AttachmentPath); } catch {}
+            }
+            item.AttachmentPath = string.Empty;
+            StatusMessage = "Investigation attachment removed.";
+            TriggerAutoSave();
+        }
+
+        [RelayCommand]
+        public void UploadImagingFile(ClinicalAttachment item)
+        {
+            if (item == null) return;
+
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "All Files (*.*)|*.*|Image Files (*.png;*.jpg;*.jpeg;*.gif)|*.png;*.jpg;*.jpeg;*.gif|PDF Files (*.pdf)|*.pdf"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    var sourcePath = openFileDialog.FileName;
+                    var extension = Path.GetExtension(sourcePath);
+                    var uploadsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Uploads");
+                    if (!Directory.Exists(uploadsDir))
+                    {
+                        Directory.CreateDirectory(uploadsDir);
+                    }
+
+                    var uniqueName = $"imaging_{Guid.NewGuid()}{extension}";
+                    var destPath = Path.Combine(uploadsDir, uniqueName);
+                    File.Copy(sourcePath, destPath, true);
+
+                    // Remove old file if it exists
+                    if (!string.IsNullOrEmpty(item.AttachmentPath) && File.Exists(item.AttachmentPath))
+                    {
+                        try { File.Delete(item.AttachmentPath); } catch {}
+                    }
+
+                    item.AttachmentPath = destPath;
+                    StatusMessage = "Imaging attachment uploaded successfully!";
+                    TriggerAutoSave();
+                }
+                catch (Exception ex)
+                {
+                    StatusMessage = $"Error uploading file: {ex.Message}";
+                }
+            }
+        }
+
+        [RelayCommand]
+        public void RemoveImagingFile(ClinicalAttachment item)
+        {
+            if (item == null) return;
+
+            if (!string.IsNullOrEmpty(item.AttachmentPath) && File.Exists(item.AttachmentPath))
+            {
+                try { File.Delete(item.AttachmentPath); } catch {}
+            }
+            item.AttachmentPath = string.Empty;
+            StatusMessage = "Imaging attachment removed.";
+            TriggerAutoSave();
+        }
 
         public void Dispose()
         {

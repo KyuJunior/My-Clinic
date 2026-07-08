@@ -25,6 +25,8 @@ namespace MedicalApp.Models
         // Investigation & Imaging
         public string Investigation { get; set; } = string.Empty;
         public string Imaging { get; set; } = string.Empty;
+        public List<ClinicalAttachment> Investigations { get; set; } = new();
+        public List<ClinicalAttachment> Imagings { get; set; } = new();
 
         // Return Date
         public DateTime? ReturnDate { get; set; }
