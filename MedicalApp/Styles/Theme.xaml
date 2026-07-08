@@ -9,7 +9,7 @@
     <SolidColorBrush x:Key="BackgroundColor" Color="#F8FAFC"/> <!-- Slate 50 -->
     <SolidColorBrush x:Key="CardBackgroundColor" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="TextColor" Color="#1E293B"/> <!-- Slate 800 -->
-    <SolidColorBrush x:Key="SubtextColor" Color="#64748B"/> <!-- Slate 500 -->
+    <SolidColorBrush x:Key="SubtextColor" Color="#475569"/> <!-- Slate 600 -->
     <SolidColorBrush x:Key="BorderColor" Color="#E2E8F0"/> <!-- Slate 200 -->
     <SolidColorBrush x:Key="AccentColor" Color="#F43F5E"/> <!-- Rose 500 -->
     <SolidColorBrush x:Key="SelectedTabBrush" Color="#F0FDFA"/> <!-- Soft teal selection background -->
@@ -20,9 +20,9 @@
     <SolidColorBrush x:Key="MaterialDesignBackground" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="MaterialDesignCardBackground" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="MaterialDesignBody" Color="#1E293B"/>
-    <SolidColorBrush x:Key="MaterialDesignBodyLight" Color="#64748B"/>
+    <SolidColorBrush x:Key="MaterialDesignBodyLight" Color="#475569"/>
     <SolidColorBrush x:Key="MaterialDesignTextBoxBorder" Color="#E2E8F0"/>
-
+ 
     <SolidColorBrush x:Key="MaterialDesign.Brush.Paper" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="MaterialDesign.Brush.Background" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="MaterialDesign.Brush.Card.Background" Color="#FFFFFF"/>
@@ -30,6 +30,11 @@
     <SolidColorBrush x:Key="MaterialDesign.Brush.TextBox.Border" Color="#E2E8F0"/>
     <SolidColorBrush x:Key="MaterialDesign.Brush.Primary" Color="#0D9488"/>
     <SolidColorBrush x:Key="MaterialDesign.Brush.Secondary" Color="#0EA5E9"/>
+
+    <!-- Global Calendar Style to guarantee solid background inside DatePicker Popup -->
+    <Style TargetType="Calendar" BasedOn="{StaticResource {x:Type Calendar}}">
+        <Setter Property="Background" Value="White"/>
+    </Style>
 
     <!-- Fonts -->
     <FontFamily x:Key="MainFont">Segoe UI Semibold, Segoe UI, Arial</FontFamily>

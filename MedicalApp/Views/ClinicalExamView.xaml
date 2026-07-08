@@ -210,7 +210,7 @@
                                                 <TextBlock Text="Chief Complaint" Style="{StaticResource Subheading}" Margin="0,0,0,5"/>
                                                 <Grid>
                                                     <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Type details here..." Text="{Binding ChiefComplaint, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8" VerticalContentAlignment="Top"/>
-                                                    <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
+                                                    <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,8,8,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
                                                             Command="{Binding SimulateVoiceInputCommand}" CommandParameter="Complaint"/>
                                                 </Grid>
                                             </StackPanel>
@@ -220,7 +220,7 @@
                                                 <TextBlock Text="History of Present Illness (HPI)" Style="{StaticResource Subheading}" Margin="0,0,0,5"/>
                                                 <Grid>
                                                     <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Type details here..." Text="{Binding HistoryOfPresentIllness, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8" VerticalContentAlignment="Top"/>
-                                                    <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
+                                                    <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,8,8,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
                                                             Command="{Binding SimulateVoiceInputCommand}" CommandParameter="HPI"/>
                                                 </Grid>
                                             </StackPanel>
@@ -235,7 +235,7 @@
                                                 <TextBlock Text="Physical Examination Findings" Style="{StaticResource Subheading}" Margin="0,0,0,5"/>
                                                 <Grid>
                                                     <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Type details here..." Text="{Binding PhysicalExamination, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8" VerticalContentAlignment="Top"/>
-                                                    <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
+                                                    <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,8,8,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
                                                             Command="{Binding SimulateVoiceInputCommand}" CommandParameter="Exam"/>
                                                 </Grid>
                                             </StackPanel>
@@ -245,7 +245,7 @@
                                                 <TextBlock Text="Treatment Plan / Notes" Style="{StaticResource Subheading}" Margin="0,0,0,5"/>
                                                 <Grid>
                                                     <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Type details here..." Text="{Binding TreatmentPlan, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8" VerticalContentAlignment="Top"/>
-                                                    <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
+                                                    <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,8,8,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
                                                             Command="{Binding SimulateVoiceInputCommand}" CommandParameter="Plan"/>
                                                 </Grid>
                                             </StackPanel>
@@ -273,12 +273,12 @@
 
                                                 <StackPanel Margin="0,0,10,0">
                                                     <TextBlock Text="Dx (Diseases)" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
-                                                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Diseases" Text="{Binding Diagnosis, UpdateSourceTrigger=PropertyChanged}" Height="40" VerticalContentAlignment="Center"/>
+                                                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Diseases" Text="{Binding Diagnosis, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
                                                 </StackPanel>
 
                                                 <StackPanel Grid.Column="1" Margin="10,0,0,0">
                                                     <TextBlock Text="Return date" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
-                                                    <DatePicker Style="{StaticResource MaterialDesignOutlinedDatePicker}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" SelectedDate="{Binding ReturnDate}" Height="40" VerticalContentAlignment="Center"/>
+                                                    <DatePicker Style="{StaticResource MaterialDesignOutlinedDatePicker}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" SelectedDate="{Binding ReturnDate}" VerticalContentAlignment="Center"/>
                                                 </StackPanel>
                                             </Grid>
                                         </StackPanel>
@@ -650,10 +650,10 @@
                                                                 <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,10,0"/>
 
                                                                 <!-- Dose -->
-                                                                <TextBox Grid.Column="2" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Text="{Binding Dose, UpdateSourceTrigger=PropertyChanged}" Height="36" Padding="8,4" Margin="0,0,5,0" VerticalContentAlignment="Center"/>
+                                                                <TextBox Grid.Column="2" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Text="{Binding Dose, UpdateSourceTrigger=PropertyChanged}" Height="40" Padding="10,8" Margin="0,0,5,0" VerticalContentAlignment="Center"/>
 
                                                                 <!-- Type Dropdown -->
-                                                                <ComboBox Grid.Column="3" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="36" Padding="8,4" Margin="0,0,5,0" SelectedValue="{Binding Type}" SelectedValuePath="Content" VerticalContentAlignment="Center" Background="White">
+                                                                <ComboBox Grid.Column="3" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="40" Padding="10,8" Margin="0,0,5,0" SelectedValue="{Binding Type}" SelectedValuePath="Content" VerticalContentAlignment="Center" Background="White">
                                                                     <ComboBox.ItemContainerStyle>
                                                                         <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
                                                                             <Setter Property="Padding" Value="10,6"/>
@@ -669,7 +669,7 @@
                                                                 </ComboBox>
 
                                                                 <!-- Time Dropdown -->
-                                                                <ComboBox Grid.Column="4" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="36" Padding="8,4" Margin="0,0,5,0" SelectedValue="{Binding Time}" SelectedValuePath="Content" VerticalContentAlignment="Center" Background="White">
+                                                                <ComboBox Grid.Column="4" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="40" Padding="10,8" Margin="0,0,5,0" SelectedValue="{Binding Time}" SelectedValuePath="Content" VerticalContentAlignment="Center" Background="White">
                                                                     <ComboBox.ItemContainerStyle>
                                                                         <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
                                                                             <Setter Property="Padding" Value="10,6"/>
@@ -686,7 +686,7 @@
                                                                 </ComboBox>
 
                                                                 <!-- Note -->
-                                                                <TextBox Grid.Column="5" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" Height="36" Padding="8,4" VerticalContentAlignment="Center"/>
+                                                                <TextBox Grid.Column="5" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" Height="40" Padding="10,8" VerticalContentAlignment="Center"/>
                                                             </Grid>
                                                         </Border>
                                                     </DataTemplate>
