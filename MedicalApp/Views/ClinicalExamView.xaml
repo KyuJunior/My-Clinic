@@ -563,7 +563,7 @@
                                     </Border>
                                 </StackPanel>
                             </Grid>
-                        </ScrollViewer>>
+                        </ScrollViewer>
 
                         <!-- Bottom Action Buttons -->
                         <Grid Grid.Row="2" Margin="5,10,5,0">
