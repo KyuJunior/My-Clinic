@@ -14,6 +14,22 @@
     <SolidColorBrush x:Key="AccentColor" Color="#F43F5E"/> <!-- Rose 500 -->
     <SolidColorBrush x:Key="SelectedTabBrush" Color="#F0FDFA"/> <!-- Soft teal selection background -->
     <SolidColorBrush x:Key="SelectedTabTextBrush" Color="#0D9488"/> <!-- Teal 600 selection text -->
+ 
+    <!-- Material Design Theme Compatibility Brushes (Legacy and Modern) -->
+    <SolidColorBrush x:Key="MaterialDesignPaper" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="MaterialDesignBackground" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="MaterialDesignCardBackground" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="MaterialDesignBody" Color="#1E293B"/>
+    <SolidColorBrush x:Key="MaterialDesignBodyLight" Color="#64748B"/>
+    <SolidColorBrush x:Key="MaterialDesignTextBoxBorder" Color="#E2E8F0"/>
+
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Paper" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Background" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Card.Background" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Body" Color="#1E293B"/>
+    <SolidColorBrush x:Key="MaterialDesign.Brush.TextBox.Border" Color="#E2E8F0"/>
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Primary" Color="#0D9488"/>
+    <SolidColorBrush x:Key="MaterialDesign.Brush.Secondary" Color="#0EA5E9"/>
 
     <!-- Fonts -->
     <FontFamily x:Key="MainFont">Segoe UI Semibold, Segoe UI, Arial</FontFamily>
