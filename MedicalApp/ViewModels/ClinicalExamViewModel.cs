@@ -36,6 +36,12 @@ namespace MedicalApp.ViewModels
         [ObservableProperty]
         private ObservableCollection<QueueEntry> _activeQueue = new();
 
+        [ObservableProperty]
+        private ObservableCollection<QueueEntry> _waitingPatients = new();
+
+        [ObservableProperty]
+        private ObservableCollection<QueueEntry> _notFinishedPatients = new();
+
         // Standalone Patient Lookup fields
         [ObservableProperty]
         private string _searchTerm = string.Empty;
@@ -222,6 +228,8 @@ namespace MedicalApp.ViewModels
             {
                 var active = await _queueService.GetActiveQueueAsync();
                 ActiveQueue = new ObservableCollection<QueueEntry>(active);
+                WaitingPatients = new ObservableCollection<QueueEntry>(active.Where(q => q.Status == "Pending"));
+                NotFinishedPatients = new ObservableCollection<QueueEntry>(active.Where(q => q.Status == "InExam"));
             }
             catch
             {
