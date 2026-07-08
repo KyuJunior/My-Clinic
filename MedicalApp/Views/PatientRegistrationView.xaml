@@ -225,6 +225,7 @@
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="*"/>
+                                                <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
                                             <TextBlock Grid.Row="0" Text="إعدادات أعمدة الجدول (عرض / إخفاء)" FontSize="13" FontWeight="Bold" Foreground="{StaticResource TextColor}" Margin="0,0,0,10" HorizontalAlignment="Right"/>
                                             
@@ -273,6 +274,9 @@
                                                     <CheckBox Content="تاريخ ولادة اخر طفل" IsChecked="{Binding ShowLastChildBirthDate}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
                                                 </StackPanel>
                                             </Grid>
+
+                                            <!-- Save Button -->
+                                            <Button Grid.Row="2" Style="{StaticResource ModernButton}" Content="حفظ كافتراضي" Command="{Binding SavePreferencesCommand}" HorizontalAlignment="Center" Margin="0,15,0,0" Padding="30,6" Height="32" FontSize="12"/>
                                         </Grid>
                                     </Border>
                                 </Popup>
@@ -455,7 +459,7 @@
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="20" Color="Black" Opacity="0.3" ShadowDepth="5"/>
                 </Border.Effect>
-                <Grid>
+<Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/> <!-- Header with gear -->
                         <RowDefinition Height="*"/>    <!-- Scrollable 2 Column form fields -->
@@ -485,6 +489,7 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
                                         <TextBlock Grid.Row="0" Text="إعدادات الحقول (عرض / إخفاء)" FontSize="13" FontWeight="Bold" Foreground="{StaticResource TextColor}" Margin="0,0,0,10" HorizontalAlignment="Right"/>
                                         
@@ -524,6 +529,9 @@
                                                 <CheckBox Content="تاريخ الزواج" IsChecked="{Binding ShowMarriageDate}" Style="{StaticResource ToggleSwitchStyle}" Margin="0,0,0,10"/>
                                             </StackPanel>
                                         </Grid>
+
+                                        <!-- Save Button -->
+                                        <Button Grid.Row="2" Style="{StaticResource ModernButton}" Content="حفظ كافتراضي" Command="{Binding SavePreferencesCommand}" HorizontalAlignment="Center" Margin="0,15,0,0" Padding="30,6" Height="32" FontSize="12"/>
                                     </Grid>
                                 </Border>
                             </Popup>

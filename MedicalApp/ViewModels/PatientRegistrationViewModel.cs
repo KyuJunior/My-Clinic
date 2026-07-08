@@ -274,6 +274,9 @@ namespace MedicalApp.ViewModels
             // Sync with current selection
             SelectedPatient = _sharedStateService.CurrentPatient;
             
+            // Load column visibilities preferences
+            LoadPreferences();
+
             // Load initial patients asynchronously
             _ = LoadPatientsAsync();
 
@@ -791,5 +794,138 @@ namespace MedicalApp.ViewModels
         {
             ShowRegistrationModal = false;
         }
+
+        private string GetPreferencesFilePath()
+        {
+            var folder = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "MyClinic");
+            if (!System.IO.Directory.Exists(folder))
+            {
+                System.IO.Directory.CreateDirectory(folder);
+            }
+            return System.IO.Path.Combine(folder, "column_preferences.json");
+        }
+
+        private void LoadPreferences()
+        {
+            try
+            {
+                var filePath = GetPreferencesFilePath();
+                if (System.IO.File.Exists(filePath))
+                {
+                    var json = System.IO.File.ReadAllText(filePath);
+                    var prefs = System.Text.Json.JsonSerializer.Deserialize<ColumnPreferences>(json);
+                    if (prefs != null)
+                    {
+                        ShowPatientId = prefs.ShowPatientId;
+                        ShowName = prefs.ShowName;
+                        ShowAge = prefs.ShowAge;
+                        ShowGender = prefs.ShowGender;
+                        ShowJob = prefs.ShowJob;
+                        ShowAddress = prefs.ShowAddress;
+                        ShowGovernorate = prefs.ShowGovernorate;
+                        ShowPhone = prefs.ShowPhone;
+                        ShowWeight = prefs.ShowWeight;
+                        ShowHeight = prefs.ShowHeight;
+                        ShowMaritalStatus = prefs.ShowMaritalStatus;
+                        ShowSpouseName = prefs.ShowSpouseName;
+                        ShowBloodGroup = prefs.ShowBloodGroup;
+                        ShowSmoking = prefs.ShowSmoking;
+                        ShowLastChildBirthDate = prefs.ShowLastChildBirthDate;
+                        ShowAlcohol = prefs.ShowAlcohol;
+                        ShowMarriageDate = prefs.ShowMarriageDate;
+                        ShowReferredBy = prefs.ShowReferredBy;
+                        ShowReturnDate = prefs.ShowReturnDate;
+                        ShowLastVisit = prefs.ShowLastVisit;
+                        ShowSpouseBirthDate = prefs.ShowSpouseBirthDate;
+                        ShowSpouseBloodGroup = prefs.ShowSpouseBloodGroup;
+                        ShowHasChildren = prefs.ShowHasChildren;
+                        ShowNotes = prefs.ShowNotes;
+                        ShowAllergy = prefs.ShowAllergy;
+                        ShowVisitsCount = prefs.ShowVisitsCount;
+                    }
+                }
+            }
+            catch
+            {
+                // Fallback to default values
+            }
+        }
+
+        [RelayCommand]
+        public void SavePreferences()
+        {
+            try
+            {
+                var filePath = GetPreferencesFilePath();
+                var prefs = new ColumnPreferences
+                {
+                    ShowPatientId = ShowPatientId,
+                    ShowName = ShowName,
+                    ShowAge = ShowAge,
+                    ShowGender = ShowGender,
+                    ShowJob = ShowJob,
+                    ShowAddress = ShowAddress,
+                    ShowGovernorate = ShowGovernorate,
+                    ShowPhone = ShowPhone,
+                    ShowWeight = ShowWeight,
+                    ShowHeight = ShowHeight,
+                    ShowMaritalStatus = ShowMaritalStatus,
+                    ShowSpouseName = ShowSpouseName,
+                    ShowBloodGroup = ShowBloodGroup,
+                    ShowSmoking = ShowSmoking,
+                    ShowLastChildBirthDate = ShowLastChildBirthDate,
+                    ShowAlcohol = ShowAlcohol,
+                    ShowMarriageDate = ShowMarriageDate,
+                    ShowReferredBy = ShowReferredBy,
+                    ShowReturnDate = ShowReturnDate,
+                    ShowLastVisit = ShowLastVisit,
+                    ShowSpouseBirthDate = ShowSpouseBirthDate,
+                    ShowSpouseBloodGroup = ShowSpouseBloodGroup,
+                    ShowHasChildren = ShowHasChildren,
+                    ShowNotes = ShowNotes,
+                    ShowAllergy = ShowAllergy,
+                    ShowVisitsCount = ShowVisitsCount
+                };
+                var json = System.Text.Json.JsonSerializer.Serialize(prefs);
+                System.IO.File.WriteAllText(filePath, json);
+                StatusMessage = "تم حفظ إعدادات الأعمدة بنجاح!";
+                IsGridGearOpen = false;
+                IsGearMenuOpen = false;
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"خطأ أثناء حفظ الإعدادات: {ex.Message}";
+            }
+        }
+    }
+
+    public class ColumnPreferences
+    {
+        public bool ShowPatientId { get; set; } = true;
+        public bool ShowName { get; set; } = true;
+        public bool ShowAge { get; set; } = true;
+        public bool ShowGender { get; set; } = true;
+        public bool ShowJob { get; set; } = true;
+        public bool ShowAddress { get; set; } = true;
+        public bool ShowGovernorate { get; set; } = true;
+        public bool ShowPhone { get; set; } = true;
+        public bool ShowWeight { get; set; } = false;
+        public bool ShowHeight { get; set; } = false;
+        public bool ShowMaritalStatus { get; set; } = false;
+        public bool ShowSpouseName { get; set; } = false;
+        public bool ShowBloodGroup { get; set; } = false;
+        public bool ShowSmoking { get; set; } = false;
+        public bool ShowLastChildBirthDate { get; set; } = false;
+        public bool ShowAlcohol { get; set; } = false;
+        public bool ShowMarriageDate { get; set; } = false;
+        public bool ShowReferredBy { get; set; } = false;
+        public bool ShowReturnDate { get; set; } = true;
+        public bool ShowLastVisit { get; set; } = true;
+        public bool ShowSpouseBirthDate { get; set; } = true;
+        public bool ShowSpouseBloodGroup { get; set; } = false;
+        public bool ShowHasChildren { get; set; } = true;
+        public bool ShowNotes { get; set; } = true;
+        public bool ShowAllergy { get; set; } = true;
+        public bool ShowVisitsCount { get; set; } = true;
     }
 }
