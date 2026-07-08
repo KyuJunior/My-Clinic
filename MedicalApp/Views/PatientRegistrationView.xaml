@@ -420,10 +420,10 @@
                                                 <Button Tag="&#xE712;" Width="28" Height="28" Padding="0" HorizontalAlignment="Center">
                                                     <Button.ContextMenu>
                                                         <ContextMenu>
-                                                            <MenuItem Header="إرسال إلى الطبيب" Command="{Binding DataContext.SendToQueueCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
-                                                            <MenuItem Header="تعديل الملف الشخصي" Command="{Binding DataContext.LoadExistingPatientCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                            <MenuItem Header="إرسال إلى الطبيب" Command="{Binding Data.SendToQueueCommand, Source={StaticResource Proxy}}" CommandParameter="{Binding}"/>
+                                                            <MenuItem Header="تعديل الملف الشخصي" Command="{Binding Data.LoadExistingPatientCommand, Source={StaticResource Proxy}}" CommandParameter="{Binding}"/>
                                                             <Separator/>
-                                                            <MenuItem Header="حذف المريض وكافة زياراته" Command="{Binding DataContext.DeletePatientCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}">
+                                                            <MenuItem Header="حذف المريض وكافة زياراته" Command="{Binding Data.DeletePatientCommand, Source={StaticResource Proxy}}" CommandParameter="{Binding}">
                                                                 <MenuItem.Icon>
                                                                     <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" Foreground="#EF4444" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                                 </MenuItem.Icon>
