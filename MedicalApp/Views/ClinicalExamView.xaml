@@ -47,15 +47,15 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Grid Grid.Row="0" Margin="0,0,0,5">
+                        <Grid Grid.Row="0" Margin="0,0,0,6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Style="{StaticResource ModernTextBox}" Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}" Tag="Search patient..." Height="32" FontSize="11" Margin="0,0,5,0"/>
-                            <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="Search" Command="{Binding SearchPatientsCommand}" Height="32" Padding="8,0" FontSize="11"/>
+                            <TextBox Grid.Column="0" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Search patient..." Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}" Height="40" FontSize="11" Margin="0,0,5,0" VerticalContentAlignment="Center" Padding="10,0"/>
+                            <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="Search" Command="{Binding SearchPatientsCommand}" Height="40" Padding="12,0" FontSize="11"/>
                         </Grid>
-                        <ComboBox Grid.Row="1" ItemsSource="{Binding Patients}" SelectedItem="{Binding SelectedPatientLookup}" DisplayMemberPath="Name" SelectedValuePath="PatientId" Height="32" FontSize="11" VerticalContentAlignment="Center"/>
+                        <ComboBox Grid.Row="1" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" ItemsSource="{Binding Patients}" SelectedItem="{Binding SelectedPatientLookup}" DisplayMemberPath="Name" SelectedValuePath="PatientId" Height="40" FontSize="11" VerticalContentAlignment="Center"/>
                     </Grid>
 
                     <!-- Section 1: Waiting Patients -->
@@ -203,7 +203,7 @@
                                             <StackPanel Margin="0,0,0,10">
                                                 <TextBlock Text="Chief Complaint" Style="{StaticResource Subheading}" Margin="0,0,0,5"/>
                                                 <Grid>
-                                                    <TextBox Style="{StaticResource ModernTextBox}" materialDesign:HintAssist.Hint="Type details here..." Text="{Binding ChiefComplaint, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8"/>
+                                                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Type details here..." Text="{Binding ChiefComplaint, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8" VerticalContentAlignment="Top"/>
                                                     <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
                                                             Command="{Binding SimulateVoiceInputCommand}" CommandParameter="Complaint"/>
                                                 </Grid>
@@ -213,7 +213,7 @@
                                             <StackPanel>
                                                 <TextBlock Text="History of Present Illness (HPI)" Style="{StaticResource Subheading}" Margin="0,0,0,5"/>
                                                 <Grid>
-                                                    <TextBox Style="{StaticResource ModernTextBox}" materialDesign:HintAssist.Hint="Type details here..." Text="{Binding HistoryOfPresentIllness, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8"/>
+                                                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Type details here..." Text="{Binding HistoryOfPresentIllness, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8" VerticalContentAlignment="Top"/>
                                                     <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
                                                             Command="{Binding SimulateVoiceInputCommand}" CommandParameter="HPI"/>
                                                 </Grid>
@@ -228,7 +228,7 @@
                                             <StackPanel Margin="0,0,0,10">
                                                 <TextBlock Text="Physical Examination Findings" Style="{StaticResource Subheading}" Margin="0,0,0,5"/>
                                                 <Grid>
-                                                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding PhysicalExamination, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8"/>
+                                                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Type details here..." Text="{Binding PhysicalExamination, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8" VerticalContentAlignment="Top"/>
                                                     <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
                                                             Command="{Binding SimulateVoiceInputCommand}" CommandParameter="Exam"/>
                                                 </Grid>
@@ -238,7 +238,7 @@
                                             <StackPanel>
                                                 <TextBlock Text="Treatment Plan / Notes" Style="{StaticResource Subheading}" Margin="0,0,0,5"/>
                                                 <Grid>
-                                                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding TreatmentPlan, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8"/>
+                                                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Type details here..." Text="{Binding TreatmentPlan, UpdateSourceTrigger=PropertyChanged}" Height="60" AcceptsReturn="True" TextWrapping="Wrap" Padding="10,8,30,8" VerticalContentAlignment="Top"/>
                                                     <Button Style="{StaticResource IconButton}" Tag="&#xE720;" ToolTip="Simulate voice input" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0" Width="24" Height="24" Padding="0" FontSize="14" Foreground="{StaticResource SubtextColor}"
                                                             Command="{Binding SimulateVoiceInputCommand}" CommandParameter="Plan"/>
                                                 </Grid>
@@ -267,12 +267,12 @@
 
                                                 <StackPanel Margin="0,0,10,0">
                                                     <TextBlock Text="Dx (Diseases)" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
-                                                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding Diagnosis, UpdateSourceTrigger=PropertyChanged}" Tag="Diseases"/>
+                                                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Diseases" Text="{Binding Diagnosis, UpdateSourceTrigger=PropertyChanged}" Height="40" VerticalContentAlignment="Center"/>
                                                 </StackPanel>
 
                                                 <StackPanel Grid.Column="1" Margin="10,0,0,0">
                                                     <TextBlock Text="Return date" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
-                                                    <DatePicker SelectedDate="{Binding ReturnDate}" Height="36" VerticalContentAlignment="Center"/>
+                                                    <DatePicker Style="{StaticResource MaterialDesignOutlinedDatePicker}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" SelectedDate="{Binding ReturnDate}" Height="40" VerticalContentAlignment="Center"/>
                                                 </StackPanel>
                                             </Grid>
                                         </StackPanel>
@@ -317,29 +317,29 @@
                                                 <!-- Row 0 -->
                                                 <StackPanel Margin="0,0,10,10">
                                                     <TextBlock Text="HR (bpm)" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
-                                                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding VitalHR, UpdateSourceTrigger=PropertyChanged}" Tag="e.g. 75"/>
+                                                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="e.g. 75" Text="{Binding VitalHR, UpdateSourceTrigger=PropertyChanged}" Height="40" VerticalContentAlignment="Center"/>
                                                 </StackPanel>
                                                 <StackPanel Grid.Column="1" Margin="5,0,5,10">
                                                     <TextBlock Text="SBP (mmHg)" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
-                                                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding VitalSBP, UpdateSourceTrigger=PropertyChanged}" Tag="e.g. 120"/>
+                                                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="e.g. 120" Text="{Binding VitalSBP, UpdateSourceTrigger=PropertyChanged}" Height="40" VerticalContentAlignment="Center"/>
                                                 </StackPanel>
                                                 <StackPanel Grid.Column="2" Margin="10,0,0,10">
                                                     <TextBlock Text="DBP (mmHg)" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
-                                                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding VitalDBP, UpdateSourceTrigger=PropertyChanged}" Tag="e.g. 80"/>
+                                                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="e.g. 80" Text="{Binding VitalDBP, UpdateSourceTrigger=PropertyChanged}" Height="40" VerticalContentAlignment="Center"/>
                                                 </StackPanel>
 
                                                 <!-- Row 1 -->
                                                 <StackPanel Grid.Row="1" Margin="0,0,10,0">
                                                     <TextBlock Text="RR (bpm)" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
-                                                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding VitalRR, UpdateSourceTrigger=PropertyChanged}" Tag="e.g. 16"/>
+                                                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="e.g. 16" Text="{Binding VitalRR, UpdateSourceTrigger=PropertyChanged}" Height="40" VerticalContentAlignment="Center"/>
                                                 </StackPanel>
                                                 <StackPanel Grid.Row="1" Grid.Column="1" Margin="5,0,5,0">
                                                     <TextBlock Text="SPO2 (%)" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
-                                                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding VitalSPO2, UpdateSourceTrigger=PropertyChanged}" Tag="e.g. 98"/>
+                                                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="e.g. 98" Text="{Binding VitalSPO2, UpdateSourceTrigger=PropertyChanged}" Height="40" VerticalContentAlignment="Center"/>
                                                 </StackPanel>
                                                 <StackPanel Grid.Row="1" Grid.Column="2" Margin="10,0,0,0">
                                                     <TextBlock Text="Temp (°C)" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
-                                                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding VitalTemp, UpdateSourceTrigger=PropertyChanged}" Tag="e.g. 37.0"/>
+                                                    <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="e.g. 37.0" Text="{Binding VitalTemp, UpdateSourceTrigger=PropertyChanged}" Height="40" VerticalContentAlignment="Center"/>
                                                 </StackPanel>
                                             </Grid>
                                         </StackPanel>
@@ -358,15 +358,15 @@
                                                         <ColumnDefinition Width="*"/>
                                                         <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <ComboBox Grid.Column="0" ItemsSource="{Binding InvestigationsList}" SelectedItem="{Binding SelectedInvestigation}" Height="36" VerticalContentAlignment="Center" Margin="0,0,6,0"/>
-                                                    <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="Add" Command="{Binding AddInvestigationCommand}" Height="36" Padding="15,0"/>
+                                                    <ComboBox Grid.Column="0" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" ItemsSource="{Binding InvestigationsList}" SelectedItem="{Binding SelectedInvestigation}" Height="40" VerticalContentAlignment="Center" Margin="0,0,6,0"/>
+                                                    <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="Add" Command="{Binding AddInvestigationCommand}" Height="40" Padding="15,0"/>
                                                 </Grid>
 
                                                 <!-- Investigation items list -->
                                                 <ItemsControl ItemsSource="{Binding AddedInvestigations}">
                                                     <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,8" Background="#F8FAFC">
+                                                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="1" CornerRadius="6" Padding="8,12" Margin="0,0,0,8" Background="#F8FAFC">
                                                             <Grid>
                                                                 <Grid.RowDefinitions>
                                                                     <RowDefinition Height="Auto"/>
@@ -378,10 +378,25 @@
                                                                 </Grid.ColumnDefinitions>
                                                                 
                                                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="{StaticResource TextColor}"/>
-                                                                <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource IconButton}" Tag="&#xE711;" ToolTip="Remove investigation" Foreground="#EF4444" FontSize="11" Width="20" Height="20"
-                                                                        Command="{Binding DataContext.RemoveInvestigationCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                                <Button Grid.Row="0" Grid.Column="1" Width="22" Height="22" Command="{Binding DataContext.RemoveInvestigationCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" ToolTip="Remove investigation">
+                                                                    <Button.Style>
+                                                                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                                                                            <Setter Property="Foreground" Value="#94A3B8"/>
+                                                                            <Setter Property="Content">
+                                                                                <Setter.Value>
+                                                                                    <materialDesign:PackIcon Kind="TrashOutline" Width="14" Height="14"/>
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                            <Style.Triggers>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter Property="Foreground" Value="#EF4444"/>
+                                                                                </Trigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Button.Style>
+                                                                </Button>
 
-                                                                <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,6,0,0">
+                                                                <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,8,0,0">
                                                                     <Grid.ColumnDefinitions>
                                                                         <ColumnDefinition Width="Auto"/>
                                                                         <ColumnDefinition Width="*"/>
@@ -394,8 +409,23 @@
                                                                         <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Foreground="#0284C7" Margin="0,0,6,0" FontSize="11"/>
                                                                         <Button Content="{Binding AttachmentName}" Style="{StaticResource LinkButton}"
                                                                                 Command="{Binding DataContext.OpenAttachmentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding AttachmentPath}" MaxWidth="150" HorizontalAlignment="Left"/>
-                                                                        <Button Style="{StaticResource IconButton}" Tag="&#xE711;" ToolTip="Remove attachment" Foreground="#EF4444" FontSize="10" Width="18" Height="18" Margin="6,0,0,0"
-                                                                                Command="{Binding DataContext.RemoveInvestigationFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                                        <Button Width="20" Height="20" Margin="6,0,0,0" Command="{Binding DataContext.RemoveInvestigationFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" ToolTip="Remove attachment">
+                                                                            <Button.Style>
+                                                                                <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                                                                                    <Setter Property="Foreground" Value="#94A3B8"/>
+                                                                                    <Setter Property="Content">
+                                                                                        <Setter.Value>
+                                                                                            <materialDesign:PackIcon Kind="TrashOutline" Width="12" Height="12"/>
+                                                                                        </Setter.Value>
+                                                                                    </Setter>
+                                                                                    <Style.Triggers>
+                                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                                            <Setter Property="Foreground" Value="#EF4444"/>
+                                                                                        </Trigger>
+                                                                                    </Style.Triggers>
+                                                                                </Style>
+                                                                            </Button.Style>
+                                                                        </Button>
                                                                     </StackPanel>
                                                                 </Grid>
                                                             </Grid>
@@ -418,15 +448,15 @@
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
-                                                <ComboBox Grid.Column="0" ItemsSource="{Binding ImagingList}" SelectedItem="{Binding SelectedImaging}" Height="36" VerticalContentAlignment="Center" Margin="0,0,6,0"/>
-                                                <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="Add" Command="{Binding AddImagingCommand}" Height="36" Padding="15,0"/>
+                                                <ComboBox Grid.Column="0" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" ItemsSource="{Binding ImagingList}" SelectedItem="{Binding SelectedImaging}" Height="40" VerticalContentAlignment="Center" Margin="0,0,6,0"/>
+                                                <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="Add" Command="{Binding AddImagingCommand}" Height="40" Padding="15,0"/>
                                             </Grid>
 
                                             <!-- Imaging items list -->
                                             <ItemsControl ItemsSource="{Binding AddedImagings}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,8" Background="#F8FAFC">
+                                                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="1" CornerRadius="6" Padding="8,12" Margin="0,0,0,8" Background="#F8FAFC">
                                                             <Grid>
                                                                 <Grid.RowDefinitions>
                                                                     <RowDefinition Height="Auto"/>
@@ -438,10 +468,25 @@
                                                                 </Grid.ColumnDefinitions>
                                                                 
                                                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="{StaticResource TextColor}"/>
-                                                                <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource IconButton}" Tag="&#xE711;" ToolTip="Remove imaging" Foreground="#EF4444" FontSize="11" Width="20" Height="20"
-                                                                        Command="{Binding DataContext.RemoveImagingCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                                <Button Grid.Row="0" Grid.Column="1" Width="22" Height="22" Command="{Binding DataContext.RemoveImagingCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" ToolTip="Remove imaging">
+                                                                    <Button.Style>
+                                                                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                                                                            <Setter Property="Foreground" Value="#94A3B8"/>
+                                                                            <Setter Property="Content">
+                                                                                <Setter.Value>
+                                                                                    <materialDesign:PackIcon Kind="TrashOutline" Width="14" Height="14"/>
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                            <Style.Triggers>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter Property="Foreground" Value="#EF4444"/>
+                                                                                </Trigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Button.Style>
+                                                                </Button>
 
-                                                                <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,6,0,0">
+                                                                <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,8,0,0">
                                                                     <Grid.ColumnDefinitions>
                                                                         <ColumnDefinition Width="Auto"/>
                                                                         <ColumnDefinition Width="*"/>
@@ -454,8 +499,23 @@
                                                                         <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Foreground="#0284C7" Margin="0,0,6,0" FontSize="11"/>
                                                                         <Button Content="{Binding AttachmentName}" Style="{StaticResource LinkButton}"
                                                                                 Command="{Binding DataContext.OpenAttachmentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding AttachmentPath}" MaxWidth="150" HorizontalAlignment="Left"/>
-                                                                        <Button Style="{StaticResource IconButton}" Tag="&#xE711;" ToolTip="Remove attachment" Foreground="#EF4444" FontSize="10" Width="18" Height="18" Margin="6,0,0,0"
-                                                                                Command="{Binding DataContext.RemoveImagingFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                                        <Button Width="20" Height="20" Margin="6,0,0,0" Command="{Binding DataContext.RemoveImagingFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" ToolTip="Remove attachment">
+                                                                            <Button.Style>
+                                                                                <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                                                                                    <Setter Property="Foreground" Value="#94A3B8"/>
+                                                                                    <Setter Property="Content">
+                                                                                        <Setter.Value>
+                                                                                            <materialDesign:PackIcon Kind="TrashOutline" Width="12" Height="12"/>
+                                                                                        </Setter.Value>
+                                                                                    </Setter>
+                                                                                    <Style.Triggers>
+                                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                                            <Setter Property="Foreground" Value="#EF4444"/>
+                                                                                        </Trigger>
+                                                                                    </Style.Triggers>
+                                                                                </Style>
+                                                                            </Button.Style>
+                                                                        </Button>
                                                                     </StackPanel>
                                                                 </Grid>
                                                             </Grid>
@@ -467,7 +527,6 @@
                                     </StackPanel>
                                 </Border>
 
-                                    <!-- Drugs Card -->
                                     <Border Style="{StaticResource CardBorder}" Margin="0,0,0,12" Visibility="{Binding ShowDrugs, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <StackPanel>
                                             <!-- Title & History button -->
@@ -492,7 +551,7 @@
                                                 </Grid.ColumnDefinitions>
                                                 <StackPanel>
                                                     <TextBlock Text="Presaved Drugs" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
-                                                    <ComboBox Height="36" Margin="0,0,0,10" VerticalContentAlignment="Center"/>
+                                                    <ComboBox Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" Height="40" Margin="0,0,0,10" VerticalContentAlignment="Center"/>
                                                     
                                                     <TextBlock Text="Trade Drugs" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
                                                     <Grid>
@@ -500,15 +559,14 @@
                                                             <ColumnDefinition Width="*"/>
                                                             <ColumnDefinition Width="Auto"/>
                                                         </Grid.ColumnDefinitions>
-                                                        <TextBox x:Name="DrugInput" Style="{StaticResource ModernTextBox}" 
-                                                                 Text="{Binding DrugSearchText, UpdateSourceTrigger=PropertyChanged}" 
-                                                                 Tag="Search or type drug name...">
+                                                        <TextBox x:Name="DrugInput" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Search or type drug name..."
+                                                                 Text="{Binding DrugSearchText, UpdateSourceTrigger=PropertyChanged}" Height="40" VerticalContentAlignment="Center">
                                                             <TextBox.InputBindings>
                                                                 <KeyBinding Key="Enter" Command="{Binding AddDrugCommand}"/>
                                                             </TextBox.InputBindings>
                                                         </TextBox>
                                                         <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="Add" 
-                                                                Command="{Binding AddDrugCommand}" Margin="10,0,0,0" Padding="15,6"/>
+                                                                Command="{Binding AddDrugCommand}" Margin="10,0,0,0" Padding="15,0" Height="40"/>
                                                         <Popup IsOpen="{Binding IsDrugSuggestionsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=DrugInput}" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Slide">
                                                             <Border Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1.5" CornerRadius="8" Width="220" MaxHeight="160" Padding="5">
                                                                 <Border.Effect>
@@ -568,10 +626,10 @@
                                                                 <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,10,0"/>
 
                                                                 <!-- Dose -->
-                                                                <TextBox Grid.Column="2" Style="{StaticResource ModernTextBox}" Text="{Binding Dose, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="5,2" Margin="0,0,5,0"/>
+                                                                <TextBox Grid.Column="2" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Text="{Binding Dose, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="5,2" Margin="0,0,5,0" VerticalContentAlignment="Center"/>
 
                                                                 <!-- Type Dropdown -->
-                                                                <ComboBox Grid.Column="3" Height="28" Margin="0,0,5,0" SelectedValue="{Binding Type}" SelectedValuePath="Content">
+                                                                <ComboBox Grid.Column="3" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="28" Margin="0,0,5,0" SelectedValue="{Binding Type}" SelectedValuePath="Content" VerticalContentAlignment="Center">
                                                                     <ComboBoxItem Content="Select..."/>
                                                                     <ComboBoxItem Content="Tablet"/>
                                                                     <ComboBoxItem Content="Capsule"/>
@@ -582,7 +640,7 @@
                                                                 </ComboBox>
 
                                                                 <!-- Time Dropdown -->
-                                                                <ComboBox Grid.Column="4" Height="28" Margin="0,0,5,0" SelectedValue="{Binding Time}" SelectedValuePath="Content">
+                                                                <ComboBox Grid.Column="4" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="28" Margin="0,0,5,0" SelectedValue="{Binding Time}" SelectedValuePath="Content" VerticalContentAlignment="Center">
                                                                     <ComboBoxItem Content="Select..."/>
                                                                     <ComboBoxItem Content="Once daily"/>
                                                                     <ComboBoxItem Content="Twice daily"/>
@@ -594,7 +652,7 @@
                                                                 </ComboBox>
 
                                                                 <!-- Note -->
-                                                                <TextBox Grid.Column="5" Style="{StaticResource ModernTextBox}" Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="5,2"/>
+                                                                <TextBox Grid.Column="5" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="5,2" VerticalContentAlignment="Center"/>
                                                             </Grid>
                                                         </Border>
                                                     </DataTemplate>
@@ -661,9 +719,18 @@
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Style="{StaticResource MaterialDesignScrollViewer}">
                         <StackPanel>
                             <!-- General Patient Info Expander -->
-                            <Expander Header="General Medical Info (الملف الطبي العام)" IsExpanded="True"
-                                      Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1" 
+                            <Expander IsExpanded="True" Background="White" BorderBrush="{StaticResource BorderColor}" BorderThickness="1" 
                                       Margin="0,0,0,15" Padding="10" ExpandDirection="Down">
+                                <Expander.Header>
+                                    <Grid HorizontalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="General Medical Info" FontWeight="Bold" Foreground="{StaticResource TextColor}" FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="الملف الطبي العام" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="8,0,0,0" VerticalAlignment="Center" FlowDirection="RightToLeft"/>
+                                    </Grid>
+                                </Expander.Header>
                                 <StackPanel Margin="5" Grid.IsSharedSizeScope="True">
                                     <!-- Blood Group -->
                                     <Grid Margin="0,0,0,10" FlowDirection="RightToLeft">
@@ -671,8 +738,8 @@
                                             <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="فصيلة الدم :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.BloodGroup, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="فصيلة الدم:" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.BloodGroup, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left" TextWrapping="Wrap"/>
                                     </Grid>
 
                                     <!-- Allergy -->
@@ -681,7 +748,7 @@
                                             <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="الحساسية :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="0" Text="الحساسية:" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
                                         <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Allergy, TargetNullValue='لا يوجد'}" FontSize="12" FontWeight="Bold" Foreground="#EF4444" HorizontalAlignment="Left" TextWrapping="Wrap"/>
                                     </Grid>
 
@@ -691,8 +758,8 @@
                                             <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="الوزن :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Weight, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="الوزن:" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Weight, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left" TextWrapping="Wrap"/>
                                     </Grid>
 
                                     <!-- Height -->
@@ -701,8 +768,8 @@
                                             <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="الطول :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Height, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="الطول:" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Height, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left" TextWrapping="Wrap"/>
                                     </Grid>
 
                                     <!-- Smoking -->
@@ -711,8 +778,8 @@
                                             <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="التدخين :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Smoking, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="التدخين:" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Smoking, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left" TextWrapping="Wrap"/>
                                     </Grid>
 
                                     <!-- Alcohol -->
@@ -721,8 +788,8 @@
                                             <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="الكحول :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Alcohol, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="الكحول:" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.Alcohol, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left" TextWrapping="Wrap"/>
                                     </Grid>
 
                                     <!-- Referred By -->
@@ -731,8 +798,8 @@
                                             <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="من طرف :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.ReferredBy, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="من طرف:" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.ReferredBy, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left" TextWrapping="Wrap"/>
                                     </Grid>
 
                                     <!-- Marital Status -->
@@ -741,13 +808,13 @@
                                             <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="الحالة الزوجية :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.MaritalStatus, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="0" Text="الحالة الزوجية:" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CurrentPatient.MaritalStatus, TargetNullValue='غير محدد'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" HorizontalAlignment="Left" TextWrapping="Wrap"/>
                                     </Grid>
 
                                     <!-- General Notes -->
                                     <StackPanel Margin="0,5,0,0" FlowDirection="RightToLeft">
-                                        <TextBlock Text="ملاحظات عامة :" FontSize="12" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                        <TextBlock Text="ملاحظات عامة:" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
                                         <TextBlock Text="{Binding CurrentPatient.Notes, TargetNullValue='لا يوجد ملاحظات'}" FontSize="12" TextWrapping="Wrap" Foreground="{StaticResource TextColor}" TextAlignment="Right" HorizontalAlignment="Right"/>
                                     </StackPanel>
                                 </StackPanel>
