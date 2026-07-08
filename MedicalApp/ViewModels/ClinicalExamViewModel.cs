@@ -42,6 +42,9 @@ namespace MedicalApp.ViewModels
         [ObservableProperty]
         private ObservableCollection<QueueEntry> _notFinishedPatients = new();
 
+        [ObservableProperty]
+        private int _completedCountToday;
+
         // Standalone Patient Lookup fields
         [ObservableProperty]
         private string _searchTerm = string.Empty;
@@ -232,10 +235,15 @@ namespace MedicalApp.ViewModels
         {
             try
             {
-                var active = await _queueService.GetActiveQueueAsync();
+                var activeTask = _queueService.GetActiveQueueAsync();
+                var completedTask = _queueService.GetCompletedCountTodayAsync();
+                await Task.WhenAll(activeTask, completedTask);
+
+                var active = activeTask.Result;
                 ActiveQueue = new ObservableCollection<QueueEntry>(active);
                 WaitingPatients = new ObservableCollection<QueueEntry>(active.Where(q => q.Status == "Pending"));
                 NotFinishedPatients = new ObservableCollection<QueueEntry>(active.Where(q => q.Status == "InExam"));
+                CompletedCountToday = completedTask.Result;
             }
             catch
             {
@@ -472,6 +480,15 @@ namespace MedicalApp.ViewModels
             {
                 StatusMessage = $"Error completing exam session: {ex.Message}";
             }
+        }
+
+        [RelayCommand]
+        public void ExitToDashboard()
+        {
+            SelectedPatientLookup = null;
+            CurrentPatient = null;
+            VisitHistory.Clear();
+            ClearFormFieldsWithoutAutoSave();
         }
 
         [RelayCommand]

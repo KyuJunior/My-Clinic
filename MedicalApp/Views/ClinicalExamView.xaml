@@ -16,8 +16,198 @@
     </UserControl.Resources>
 
     <Grid Margin="10,5,10,10">
-        <!-- Main Workspace (Waitlist Queue + Form + Patient Info Sidebar) -->
-        <Grid>
+        <!-- 1. Doctor Dashboard Layout (Visible when CurrentPatient is null) -->
+        <Grid Visibility="{Binding CurrentPatient, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Inverse}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- Header Console -->
+                <RowDefinition Height="Auto"/> <!-- Stats Row -->
+                <RowDefinition Height="*"/>    <!-- Queues Grid -->
+            </Grid.RowDefinitions>
+
+            <!-- Header Console -->
+            <Grid Grid.Row="0" Margin="5,15,5,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Doctor Workspace" Style="{StaticResource Header1}"/>
+                    <TextBlock Text="Welcome back, Dr. Yaser. Manage today's queues and clinical sessions below." Style="{StaticResource Subheading}" FontSize="13"/>
+                </StackPanel>
+                <Button Grid.Column="1" Style="{StaticResource NavButton}" Padding="15,8" VerticalAlignment="Center"
+                        Tag="&#xE137;" Content="Switch Role" 
+                        Command="{Binding DataContext.NavigateToHomeCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            </Grid>
+
+            <!-- Stats Row -->
+            <Grid Grid.Row="1" Margin="5,0,5,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Stat 1: Waiting today -->
+                <Border Grid.Column="0" Style="{StaticResource CardBorder}" Margin="0,0,10,0" Padding="15,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="44" Height="44" CornerRadius="8" Background="#E0F2FE" VerticalAlignment="Center">
+                            <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="#0284C7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="Waiting Queue" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,2"/>
+                            <TextBlock Text="{Binding WaitingPatients.Count}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextColor}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Stat 2: In-Progress / On Hold -->
+                <Border Grid.Column="1" Style="{StaticResource CardBorder}" Margin="10,0,10,0" Padding="15,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="44" Height="44" CornerRadius="8" Background="#FEF3C7" VerticalAlignment="Center">
+                            <TextBlock Text="&#xE102;" FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="#D97706" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="On Hold / In Progress" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,2"/>
+                            <TextBlock Text="{Binding NotFinishedPatients.Count}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextColor}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Stat 3: Completed Today -->
+                <Border Grid.Column="2" Style="{StaticResource CardBorder}" Margin="10,0,0,0" Padding="15,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="44" Height="44" CornerRadius="8" Background="#D1FAE5" VerticalAlignment="Center">
+                            <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="#059669" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="Completed Visits" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,2"/>
+                            <TextBlock Text="{Binding CompletedCountToday}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextColor}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Queues Grid -->
+            <Grid Grid.Row="2" Margin="5,0,5,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Column 0: Waiting Patients Queue -->
+                <Border Grid.Column="0" Style="{StaticResource CardBorder}" Margin="0,0,10,0" VerticalAlignment="Stretch">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/> <!-- Title Header -->
+                            <RowDefinition Height="*"/>    <!-- Scrollable list -->
+                        </Grid.RowDefinitions>
+                        
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
+                            <TextBlock Text="&#xEA37;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="{StaticResource PrimaryColor}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="Waiting Queue" Style="{StaticResource Heading}" VerticalAlignment="Center"/>
+                            <Border Background="#CCFBF1" CornerRadius="10" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding WaitingPatients.Count, StringFormat='\{0\} patients'}" FontSize="11" FontWeight="SemiBold" Foreground="#0F766E"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Scrollable list of pending patients -->
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Style="{StaticResource MaterialDesignScrollViewer}">
+                            <ListBox ItemsSource="{Binding WaitingPatients}" BorderThickness="0" Background="Transparent" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="{StaticResource BorderColor}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,10" Background="White">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding PatientName}" FontSize="14" FontWeight="Bold" Foreground="{StaticResource TextColor}"/>
+                                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                                        <TextBlock Text="{Binding Patient.Gender}" FontSize="12" Foreground="{StaticResource SubtextColor}"/>
+                                                        <TextBlock Text="  •  " FontSize="12" Foreground="{StaticResource SubtextColor}"/>
+                                                        <TextBlock Text="{Binding Patient.Age, StringFormat='\{0\} years'}" FontSize="12" Foreground="{StaticResource SubtextColor}"/>
+                                                        <TextBlock Text="  •  " FontSize="12" Foreground="{StaticResource SubtextColor}"/>
+                                                        <TextBlock Text="{Binding Patient.Phone}" FontSize="11" Foreground="{StaticResource SubtextColor}"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                                <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="Start Exam" 
+                                                        Command="{Binding DataContext.StartSessionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                        CommandParameter="{Binding}" Padding="15,6" VerticalAlignment="Center" FontSize="12"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+
+                <!-- Column 1: In-Progress / On Hold Queue -->
+                <Border Grid.Column="1" Style="{StaticResource CardBorder}" Margin="10,0,0,0" VerticalAlignment="Stretch">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/> <!-- Title Header -->
+                            <RowDefinition Height="*"/>    <!-- Scrollable list -->
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
+                            <TextBlock Text="&#xE102;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="#D97706" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="In-Progress / On Hold" Style="{StaticResource Heading}" VerticalAlignment="Center"/>
+                            <Border Background="#FEF3C7" CornerRadius="10" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding NotFinishedPatients.Count, StringFormat='\{0\} active'}" FontSize="11" FontWeight="SemiBold" Foreground="#B45309"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Scrollable list of hold/in-exam patients -->
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Style="{StaticResource MaterialDesignScrollViewer}">
+                            <ListBox ItemsSource="{Binding NotFinishedPatients}" BorderThickness="0" Background="Transparent" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="#FCD34D" BorderThickness="1.5" CornerRadius="8" Padding="12" Margin="0,0,0,10" Background="#FFFBEB">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding PatientName}" FontSize="14" FontWeight="Bold" Foreground="{StaticResource TextColor}"/>
+                                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                                        <TextBlock Text="{Binding Patient.Gender}" FontSize="12" Foreground="{StaticResource SubtextColor}"/>
+                                                        <TextBlock Text="  •  " FontSize="12" Foreground="{StaticResource SubtextColor}"/>
+                                                        <TextBlock Text="{Binding Patient.Age, StringFormat='\{0\} years'}" FontSize="12" Foreground="{StaticResource SubtextColor}"/>
+                                                        <TextBlock Text="  •  " FontSize="12" Foreground="{StaticResource SubtextColor}"/>
+                                                        <TextBlock Text="{Binding Patient.Phone}" FontSize="11" Foreground="{StaticResource SubtextColor}"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                                <Button Grid.Column="1" Style="{StaticResource WarningButton}" Content="Resume" 
+                                                        Command="{Binding DataContext.StartSessionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                        CommandParameter="{Binding}" Background="#D97706" BorderBrush="#D97706" Padding="15,6" VerticalAlignment="Center" FontSize="12"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- 2. Active Exam Room Layout (Visible when CurrentPatient is NOT null) -->
+        <Grid Visibility="{Binding CurrentPatient, Converter={StaticResource NullToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="240"/> <!-- Waitlist Queue Sidebar -->
                 <ColumnDefinition Width="*"/>   <!-- Active Exam Form (Grid) -->
@@ -38,8 +228,8 @@
                     <!-- Back Button Header -->
                     <Button Grid.Row="0" HorizontalAlignment="Stretch" Margin="0,0,0,15"
                             Style="{StaticResource NavButton}" Padding="12,7" 
-                            Tag="&#xE72B;" Content="Back to Dashboard"
-                            Command="{Binding DataContext.NavigateToHomeCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                            Tag="&#xE72B;" Content="Back to Doctor Dashboard"
+                            Command="{Binding ExitToDashboardCommand}"/>
 
                     <!-- Section 0: Quick Lookup -->
                     <Grid Grid.Row="1" Margin="0,0,0,15">

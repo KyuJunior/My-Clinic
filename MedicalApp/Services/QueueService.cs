@@ -87,5 +87,14 @@ namespace MedicalApp.Services
                 await context.SaveChangesAsync();
             }
         }
+
+        public async Task<int> GetCompletedCountTodayAsync()
+        {
+            using var context = await _contextFactory.CreateDbContextAsync();
+            var today = System.DateTime.Today;
+            return await context.QueueEntries
+                .Where(q => q.Status == "Completed" && q.CreatedAt >= today)
+                .CountAsync();
+        }
     }
 }
