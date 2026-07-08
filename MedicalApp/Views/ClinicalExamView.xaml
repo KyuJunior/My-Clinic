@@ -55,7 +55,13 @@
                             <TextBox Grid.Column="0" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" materialDesign:HintAssist.Hint="Search patient..." Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}" Height="40" FontSize="11" Margin="0,0,5,0" VerticalContentAlignment="Center" Padding="10,0"/>
                             <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="Search" Command="{Binding SearchPatientsCommand}" Height="40" Padding="12,0" FontSize="11"/>
                         </Grid>
-                        <ComboBox Grid.Row="1" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" ItemsSource="{Binding Patients}" SelectedItem="{Binding SelectedPatientLookup}" DisplayMemberPath="Name" SelectedValuePath="PatientId" Height="40" FontSize="11" VerticalContentAlignment="Center"/>
+                        <ComboBox Grid.Row="1" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" ItemsSource="{Binding Patients}" SelectedItem="{Binding SelectedPatientLookup}" DisplayMemberPath="Name" SelectedValuePath="PatientId" Height="40" FontSize="11" VerticalContentAlignment="Center" Background="White">
+                            <ComboBox.ItemContainerStyle>
+                                <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                    <Setter Property="Padding" Value="16,8"/>
+                                </Style>
+                            </ComboBox.ItemContainerStyle>
+                        </ComboBox>
                     </Grid>
 
                     <!-- Section 1: Waiting Patients -->
@@ -358,7 +364,13 @@
                                                         <ColumnDefinition Width="*"/>
                                                         <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <ComboBox Grid.Column="0" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" ItemsSource="{Binding InvestigationsList}" SelectedItem="{Binding SelectedInvestigation}" Height="40" VerticalContentAlignment="Center" Margin="0,0,6,0"/>
+                                                    <ComboBox Grid.Column="0" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" ItemsSource="{Binding InvestigationsList}" SelectedItem="{Binding SelectedInvestigation}" Height="40" VerticalContentAlignment="Center" Margin="0,0,6,0" Background="White">
+                                                        <ComboBox.ItemContainerStyle>
+                                                            <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                                                <Setter Property="Padding" Value="16,8"/>
+                                                            </Style>
+                                                        </ComboBox.ItemContainerStyle>
+                                                    </ComboBox>
                                                     <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="Add" Command="{Binding AddInvestigationCommand}" Height="40" Padding="15,0"/>
                                                 </Grid>
 
@@ -448,7 +460,13 @@
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
-                                                <ComboBox Grid.Column="0" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" ItemsSource="{Binding ImagingList}" SelectedItem="{Binding SelectedImaging}" Height="40" VerticalContentAlignment="Center" Margin="0,0,6,0"/>
+                                                <ComboBox Grid.Column="0" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" ItemsSource="{Binding ImagingList}" SelectedItem="{Binding SelectedImaging}" Height="40" VerticalContentAlignment="Center" Margin="0,0,6,0" Background="White">
+                                                    <ComboBox.ItemContainerStyle>
+                                                        <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                                            <Setter Property="Padding" Value="16,8"/>
+                                                        </Style>
+                                                    </ComboBox.ItemContainerStyle>
+                                                </ComboBox>
                                                 <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="Add" Command="{Binding AddImagingCommand}" Height="40" Padding="15,0"/>
                                             </Grid>
 
@@ -551,7 +569,13 @@
                                                 </Grid.ColumnDefinitions>
                                                 <StackPanel>
                                                     <TextBlock Text="Presaved Drugs" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
-                                                    <ComboBox Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" Height="40" Margin="0,0,0,10" VerticalContentAlignment="Center"/>
+                                                    <ComboBox Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="8" Height="40" Margin="0,0,0,10" VerticalContentAlignment="Center" Background="White">
+                                                        <ComboBox.ItemContainerStyle>
+                                                            <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                                                <Setter Property="Padding" Value="16,8"/>
+                                                            </Style>
+                                                        </ComboBox.ItemContainerStyle>
+                                                    </ComboBox>
                                                     
                                                     <TextBlock Text="Trade Drugs" FontSize="11" Foreground="{StaticResource SubtextColor}" Margin="0,0,0,4"/>
                                                     <Grid>
@@ -623,13 +647,18 @@
                                                                         Command="{Binding DataContext.RemoveDrugCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
 
                                                                 <!-- Name -->
-                                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,10,0"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,10,0"/>
 
                                                                 <!-- Dose -->
                                                                 <TextBox Grid.Column="2" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Text="{Binding Dose, UpdateSourceTrigger=PropertyChanged}" Height="28" Padding="5,2" Margin="0,0,5,0" VerticalContentAlignment="Center"/>
 
                                                                 <!-- Type Dropdown -->
-                                                                <ComboBox Grid.Column="3" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="28" Margin="0,0,5,0" SelectedValue="{Binding Type}" SelectedValuePath="Content" VerticalContentAlignment="Center">
+                                                                <ComboBox Grid.Column="3" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="28" Margin="0,0,5,0" SelectedValue="{Binding Type}" SelectedValuePath="Content" VerticalContentAlignment="Center" Background="White">
+                                                                    <ComboBox.ItemContainerStyle>
+                                                                        <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                                                            <Setter Property="Padding" Value="10,6"/>
+                                                                        </Style>
+                                                                    </ComboBox.ItemContainerStyle>
                                                                     <ComboBoxItem Content="Select..."/>
                                                                     <ComboBoxItem Content="Tablet"/>
                                                                     <ComboBoxItem Content="Capsule"/>
@@ -640,7 +669,12 @@
                                                                 </ComboBox>
 
                                                                 <!-- Time Dropdown -->
-                                                                <ComboBox Grid.Column="4" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="28" Margin="0,0,5,0" SelectedValue="{Binding Time}" SelectedValuePath="Content" VerticalContentAlignment="Center">
+                                                                <ComboBox Grid.Column="4" Style="{StaticResource MaterialDesignOutlinedComboBox}" materialDesign:TextFieldAssist.TextFieldCornerRadius="4" Height="28" Margin="0,0,5,0" SelectedValue="{Binding Time}" SelectedValuePath="Content" VerticalContentAlignment="Center" Background="White">
+                                                                    <ComboBox.ItemContainerStyle>
+                                                                        <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                                                            <Setter Property="Padding" Value="10,6"/>
+                                                                        </Style>
+                                                                    </ComboBox.ItemContainerStyle>
                                                                     <ComboBoxItem Content="Select..."/>
                                                                     <ComboBoxItem Content="Once daily"/>
                                                                     <ComboBoxItem Content="Twice daily"/>
