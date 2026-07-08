@@ -14,20 +14,9 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
 
-    <Grid Margin="10,15,10,10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- Back Navigation Header -->
-            <RowDefinition Height="*"/>    <!-- Main Workspace -->
-        </Grid.RowDefinitions>
-
-        <!-- Back Button Header -->
-        <Button Grid.Row="0" HorizontalAlignment="Left" Margin="0,0,0,15"
-                Style="{StaticResource NavButton}" Padding="12,7" 
-                Tag="&#xE72B;" Content="Back to Dashboard"
-                Command="{Binding DataContext.NavigateToHomeCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
-
+    <Grid Margin="10,5,10,10">
         <!-- Main Workspace (Waitlist Queue + Form + Patient Info Sidebar) -->
-        <Grid Grid.Row="1">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="240"/> <!-- Waitlist Queue Sidebar -->
                 <ColumnDefinition Width="*"/>   <!-- Active Exam Form (Grid) -->
@@ -38,14 +27,21 @@
             <Border Grid.Column="0" Style="{StaticResource CardBorder}" Margin="0,0,15,0" VerticalAlignment="Stretch">
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Back Button -->
                         <RowDefinition Height="Auto"/> <!-- Quick Lookup -->
                         <RowDefinition Height="*"/> <!-- Waiting Patients -->
                         <RowDefinition Height="Auto"/> <!-- Divider -->
                         <RowDefinition Height="*"/> <!-- Not Finished Patients -->
                     </Grid.RowDefinitions>
 
+                    <!-- Back Button Header -->
+                    <Button Grid.Row="0" HorizontalAlignment="Stretch" Margin="0,0,0,15"
+                            Style="{StaticResource NavButton}" Padding="12,7" 
+                            Tag="&#xE72B;" Content="Back to Dashboard"
+                            Command="{Binding DataContext.NavigateToHomeCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+
                     <!-- Section 0: Quick Lookup -->
-                    <Grid Grid.Row="0" Margin="0,0,0,15">
+                    <Grid Grid.Row="1" Margin="0,0,0,15">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -62,7 +58,7 @@
                     </Grid>
 
                     <!-- Section 1: Waiting Patients -->
-                    <Grid Grid.Row="1" Margin="0,0,0,10">
+                    <Grid Grid.Row="2" Margin="0,0,0,10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
@@ -102,10 +98,10 @@
                     </Grid>
 
                     <!-- Divider -->
-                    <Separator Grid.Row="2" Background="{StaticResource BorderColor}" Height="1.5" Margin="0,5,0,15"/>
+                    <Separator Grid.Row="3" Background="{StaticResource BorderColor}" Height="1.5" Margin="0,5,0,15"/>
 
                     <!-- Section 2: Not Finished Patients -->
-                    <Grid Grid.Row="3">
+                    <Grid Grid.Row="4">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
