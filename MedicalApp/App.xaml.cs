@@ -9,6 +9,8 @@ using MedicalApp.Services;
 using MedicalApp.ViewModels;
 using MedicalApp.Views;
 
+using Microsoft.Data.SqlClient;
+
 namespace MedicalApp
 {
     public partial class App : Application
@@ -20,12 +22,47 @@ namespace MedicalApp
         {
             base.OnStartup(e);
 
-            // Set up Configuration builder to read appsettings.json
+            // Set up Configuration builder to read appsettings.json and optional db_config.json
             var builder = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("db_config.json", optional: true, reloadOnChange: true);
 
             Configuration = builder.Build();
+
+            // Test the database connection before continuing
+            var connectionString = Configuration.GetConnectionString("DefaultConnection") ?? "";
+            try
+            {
+                using (var conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Connection failed! Open the configuration window
+                var configWin = new MedicalApp.Views.DbConfigWindow(connectionString, ex.Message);
+                if (configWin.ShowDialog() == true)
+                {
+                    // Save the new connection string
+                    var newConnStr = configWin.SelectedConnectionString;
+                    var configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "db_config.json");
+                    var configContent = $"{{\n  \"ConnectionStrings\": {{\n    \"DefaultConnection\": \"{newConnStr.Replace("\\", "\\\\")}\"\n  }}\n}}";
+                    File.WriteAllText(configPath, configContent);
+
+                    // Relaunch the application with same arguments
+                    var currentExecutable = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName;
+                    if (!string.IsNullOrEmpty(currentExecutable))
+                    {
+                        var args = string.Join(" ", e.Args);
+                        System.Diagnostics.Process.Start(currentExecutable, args);
+                    }
+                }
+                
+                Shutdown();
+                return;
+            }
 
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);

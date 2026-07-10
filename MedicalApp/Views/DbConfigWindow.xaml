@@ -1,0 +1,86 @@
+<Window x:Class="MedicalApp.Views.DbConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Database Connection Settings" 
+        Height="450" Width="420"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize">
+
+    <Border Background="#1E293B" BorderBrush="#334155" BorderThickness="1.5" CornerRadius="12">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="25" Color="Black" Opacity="0.4" ShadowDepth="4"/>
+        </Border.Effect>
+        <Grid Margin="25">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- Title / Header -->
+                <RowDefinition Height="*"/>    <!-- Form Fields -->
+                <RowDefinition Height="Auto"/> <!-- Status Msg -->
+                <RowDefinition Height="Auto"/> <!-- Buttons -->
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                <TextBlock Text="إعدادات الاتصال بقاعدة البيانات" FontSize="18" FontWeight="Bold" Foreground="#38BDF8" TextAlignment="Right"/>
+                <TextBlock Text="Database Connection Configuration" FontSize="12" Foreground="#94A3B8" Margin="0,2,0,0" TextAlignment="Left"/>
+                <TextBlock Text="Cannot connect to the local database. Please specify the host server settings below." TextWrapping="Wrap" FontSize="11" Foreground="#EF4444" Margin="0,10,0,0"/>
+            </StackPanel>
+
+            <!-- Form -->
+            <StackPanel Grid.Row="1" Margin="0,0,0,15">
+                <!-- Server / Host IP -->
+                <TextBlock Text="اسم السيرفر أو عنوان الـ IP (Server / Host IP)" FontSize="11" Foreground="#94A3B8" HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                <TextBox x:Name="ServerTextBox" Style="{DynamicResource ModernTextBox}" Height="36" Text="localhost" Margin="0,0,0,12" Background="#0F172A" Foreground="White" BorderBrush="#334155"/>
+
+                <!-- Database Name -->
+                <TextBlock Text="اسم قاعدة البيانات (Database Name)" FontSize="11" Foreground="#94A3B8" HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                <TextBox x:Name="DatabaseTextBox" Style="{DynamicResource ModernTextBox}" Height="36" Text="MedicalDb" Margin="0,0,0,12" Background="#0F172A" Foreground="White" BorderBrush="#334155"/>
+
+                <!-- Auth Mode -->
+                <TextBlock Text="طريقة المصادقة (Authentication Mode)" FontSize="11" Foreground="#94A3B8" HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                <ComboBox x:Name="AuthComboBox" Height="36" Margin="0,0,0,12" SelectionChanged="AuthComboBox_SelectionChanged" Background="#0F172A" Foreground="White">
+                    <ComboBoxItem Content="Windows Authentication (Trusted)" IsSelected="True"/>
+                    <ComboBoxItem Content="SQL Server Authentication"/>
+                </ComboBox>
+
+                <!-- SQL Authentication Panel -->
+                <StackPanel x:Name="SqlAuthPanel" Visibility="Collapsed">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,5,0">
+                            <TextBlock Text="User Name" FontSize="11" Foreground="#94A3B8" Margin="0,0,0,4"/>
+                            <TextBox x:Name="UserTextBox" Style="{DynamicResource ModernTextBox}" Height="36" Text="sa" Background="#0F172A" Foreground="White" BorderBrush="#334155"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                            <TextBlock Text="Password" FontSize="11" Foreground="#94A3B8" Margin="0,0,0,4"/>
+                            <PasswordBox x:Name="PasswordTextBox" Height="36" Background="#0F172A" Foreground="White" BorderBrush="#334155"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Status Msg -->
+            <TextBlock Grid.Row="2" x:Name="StatusTextBlock" Text="" Foreground="#EF4444" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,15"/>
+
+            <!-- Action Buttons -->
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Style="{DynamicResource ModernButton}" Content="إلغاء (Exit)" Click="CancelButton_Click" Background="#EF4444" BorderBrush="#EF4444" Height="36"/>
+                <Button Grid.Column="1" Style="{DynamicResource SecondaryButton}" Content="فحص الاتصال" Click="TestButton_Click" Width="100" Margin="10,0" Height="36" Foreground="#38BDF8" BorderBrush="#38BDF8"/>
+                <Button Grid.Column="2" Style="{DynamicResource ModernButton}" Content="حفظ (Save)" Click="SaveButton_Click" Background="#10B981" BorderBrush="#10B981" Height="36"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
