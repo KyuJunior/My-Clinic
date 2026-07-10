@@ -45,6 +45,52 @@ namespace MedicalApp.ViewModels
         [ObservableProperty]
         private string _switchDoctorErrorMessage = string.Empty;
 
+        [ObservableProperty]
+        private bool _showAddPatientModal = false;
+
+        [ObservableProperty]
+        private string _newPatientName = string.Empty;
+
+        [ObservableProperty]
+        private int _newPatientAge = 0;
+
+        [ObservableProperty]
+        private int _newPatientAgeMonths = 0;
+
+        [ObservableProperty]
+        private string _newPatientGender = "ذكر";
+
+        [ObservableProperty]
+        private string _newPatientPhone = string.Empty;
+
+        [ObservableProperty]
+        private DateTime? _newPatientBirthDate = null;
+
+        [ObservableProperty]
+        private string _newPatientGovernorate = "بغداد";
+
+        [ObservableProperty]
+        private string _newPatientFiles = string.Empty;
+
+        [ObservableProperty]
+        private bool _newPatientIsPaidVisit = true;
+
+        [ObservableProperty]
+        private bool _newPatientIsFreeVisit = false;
+
+        [ObservableProperty]
+        private string _newPatientVisitPrice = "25000";
+
+        [ObservableProperty]
+        private string _addPatientValidationMessage = string.Empty;
+
+        public string NewPatientFileName => string.IsNullOrEmpty(NewPatientFiles) ? "لا يوجد ملف" : System.IO.Path.GetFileName(NewPatientFiles);
+
+        partial void OnNewPatientFilesChanged(string value)
+        {
+            OnPropertyChanged(nameof(NewPatientFileName));
+        }
+
         [RelayCommand]
         public void ToggleTheme()
         {
@@ -1464,6 +1510,150 @@ namespace MedicalApp.ViewModels
             item.AttachmentPath = string.Empty;
             StatusMessage = "Imaging attachment removed.";
             TriggerAutoSave();
+        }
+
+        [RelayCommand]
+        public void OpenAddPatientModal()
+        {
+            NewPatientName = string.Empty;
+            NewPatientAge = 0;
+            NewPatientAgeMonths = 0;
+            NewPatientGender = "ذكر";
+            NewPatientPhone = string.Empty;
+            NewPatientBirthDate = null;
+            NewPatientGovernorate = "بغداد";
+            NewPatientFiles = string.Empty;
+            
+            NewPatientIsPaidVisit = true;
+            NewPatientIsFreeVisit = false;
+            NewPatientVisitPrice = "25000";
+            
+            AddPatientValidationMessage = string.Empty;
+            ShowAddPatientModal = true;
+        }
+
+        [RelayCommand]
+        public void CancelAddPatient()
+        {
+            ShowAddPatientModal = false;
+        }
+
+        [RelayCommand]
+        public void UploadNewPatientFile()
+        {
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "All Files (*.*)|*.*|Image Files (*.png;*.jpg;*.jpeg;*.gif)|*.png;*.jpg;*.jpeg;*.gif|PDF Files (*.pdf)|*.pdf|Excel Files (*.xls;*.xlsx)|*.xls;*.xlsx"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    var sourcePath = openFileDialog.FileName;
+                    var extension = System.IO.Path.GetExtension(sourcePath);
+                    var destDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "PatientFiles");
+                    if (!System.IO.Directory.Exists(destDir))
+                    {
+                        System.IO.Directory.CreateDirectory(destDir);
+                    }
+
+                    var uniqueName = $"patient_{Guid.NewGuid()}{extension}";
+                    var destPath = System.IO.Path.Combine(destDir, uniqueName);
+                    
+                    System.IO.File.Copy(sourcePath, destPath, overwrite: true);
+                    NewPatientFiles = destPath;
+                }
+                catch (Exception ex)
+                {
+                    AddPatientValidationMessage = $"Failed to upload file: {ex.Message}";
+                }
+            }
+        }
+
+        [RelayCommand]
+        public void RemoveNewPatientFile()
+        {
+            NewPatientFiles = string.Empty;
+        }
+
+        [RelayCommand]
+        public void OpenNewPatientFile(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath)) return;
+            try
+            {
+                var processInfo = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = filePath,
+                    UseShellExecute = true
+                };
+                System.Diagnostics.Process.Start(processInfo);
+            }
+            catch (Exception ex)
+            {
+                AddPatientValidationMessage = $"Failed to open file: {ex.Message}";
+            }
+        }
+
+        [RelayCommand]
+        public async Task SaveAddPatientAsync()
+        {
+            if (string.IsNullOrWhiteSpace(NewPatientName))
+            {
+                AddPatientValidationMessage = "Patient Name is required! | اسم المريض مطلوب!";
+                return;
+            }
+
+            try
+            {
+                var patient = new Patient
+                {
+                    Name = NewPatientName.Trim(),
+                    Age = NewPatientAge,
+                    AgeMonths = NewPatientAgeMonths,
+                    Gender = NewPatientGender,
+                    Phone = NewPatientPhone?.Trim() ?? string.Empty,
+                    BirthDate = NewPatientBirthDate,
+                    Governorate = NewPatientGovernorate,
+                    PatientFiles = NewPatientFiles ?? string.Empty,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                await _patientService.AddPatientAsync(patient);
+
+                decimal price = 0;
+                if (NewPatientIsPaidVisit)
+                {
+                    decimal.TryParse(NewPatientVisitPrice, out price);
+                }
+
+                var visit = new Visit
+                {
+                    PatientId = patient.PatientId,
+                    VisitDate = DateTime.UtcNow,
+                    IsPaid = NewPatientIsPaidVisit,
+                    VisitPrice = price,
+                    DoctorName = ActiveDoctorName
+                };
+
+                await _patientService.AddVisitForCheckInAsync(visit);
+
+                // Add to daily queue
+                await _queueService.AddToQueueAsync(patient.PatientId, patient.Name, ActiveDoctorName);
+
+                ShowAddPatientModal = false;
+
+                // Sync current selection
+                CurrentPatient = patient;
+                SelectedPatientLookup = patient;
+
+                _ = PollQueueAsync();
+            }
+            catch (Exception ex)
+            {
+                AddPatientValidationMessage = $"Error: {ex.Message}";
+            }
         }
 
         public void StartPolling()

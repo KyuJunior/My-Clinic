@@ -823,7 +823,7 @@
                                 <Button Style="{StaticResource ModernButton}" Content="Start New Visit" Height="38" Padding="20,0" Margin="0,0,10,0"
                                         Command="{Binding OpenStartNewVisitWindowCommand}"/>
                                 <Button Style="{StaticResource SecondaryButton}" BorderBrush="{StaticResource PrimaryColor}" Foreground="{StaticResource PrimaryColor}" Content="+ New Patient" Height="38" Padding="20,0"
-                                        Command="{Binding DataContext.NavigateToPatientRegistrationCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                        Command="{Binding OpenAddPatientModalCommand}"/>
                             </StackPanel>
                         </StackPanel>
                         <!-- Mini Welcome Graphic -->
@@ -3531,6 +3531,148 @@
                         <Button Grid.Column="0" Style="{StaticResource ModernButton}" Content="إلغاء" Command="{Binding CancelSwitchDoctorPasswordCommand}" Background="#EF4444" BorderBrush="#EF4444" Height="36" Margin="0,0,5,0"/>
                         <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="تحقق" Command="{Binding ConfirmSwitchDoctorPasswordCommand}" Height="36" Margin="5,0,0,0"/>
                     </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Overlay Modal Dialog: Doctor-Side Add Patient -->
+        <Grid Background="#80000000" Visibility="{Binding ShowAddPatientModal, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Border Background="{DynamicResource CardBackgroundColor}" BorderBrush="{StaticResource BorderColor}" BorderThickness="1.5" CornerRadius="12" Width="720" MaxHeight="620" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="25">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="20" Color="Black" Opacity="0.3" ShadowDepth="5"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Header -->
+                        <RowDefinition Height="*"/>    <!-- Scrollable Form Fields -->
+                        <RowDefinition Height="Auto"/> <!-- Action Buttons -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Header -->
+                    <TextBlock Grid.Row="0" Text="اضافة مريض جديد وتسجيل زيارة (Add Patient &amp; Check-In)" FontSize="20" FontWeight="Bold" Foreground="{StaticResource PrimaryColor}" HorizontalAlignment="Right" Margin="0,0,0,15"/>
+
+                    <!-- Scrollable Form -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,0,20">
+                        <Grid Margin="5,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Left Column -->
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0" FlowDirection="RightToLeft">
+                                <!-- Governorate -->
+                                <TextBlock Text="المحافظة" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <ComboBox SelectedValuePath="Content" SelectedValue="{Binding NewPatientGovernorate}" Height="36" Margin="0,0,0,12">
+                                    <ComboBoxItem Content="بغداد"/>
+                                    <ComboBoxItem Content="البصرة"/>
+                                    <ComboBoxItem Content="نينوى"/>
+                                    <ComboBoxItem Content="اربيل"/>
+                                    <ComboBoxItem Content="النجف"/>
+                                    <ComboBoxItem Content="كربلاء"/>
+                                    <ComboBoxItem Content="بابل"/>
+                                    <ComboBoxItem Content="الأنبار"/>
+                                    <ComboBoxItem Content="ديالى"/>
+                                    <ComboBoxItem Content="كركوك"/>
+                                    <ComboBoxItem Content="صلاح الدين"/>
+                                    <ComboBoxItem Content="المثنى"/>
+                                    <ComboBoxItem Content="ميسان"/>
+                                    <ComboBoxItem Content="ذي قار"/>
+                                    <ComboBoxItem Content="السليمانية"/>
+                                    <ComboBoxItem Content="دهوك"/>
+                                    <ComboBoxItem Content="واسط"/>
+                                    <ComboBoxItem Content="القادسية"/>
+                                </ComboBox>
+
+                                <!-- Gender -->
+                                <TextBlock Text="* الجنس" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <ComboBox SelectedValuePath="Content" SelectedValue="{Binding NewPatientGender}" Height="36" Margin="0,0,0,12">
+                                    <ComboBoxItem Content="ذكر"/>
+                                    <ComboBoxItem Content="أنثى"/>
+                                </ComboBox>
+
+                                <!-- Visit Type Choice -->
+                                <TextBlock Text="نوع الزيارة" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <Grid Margin="0,0,0,12" FlowDirection="RightToLeft">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <RadioButton Grid.Column="0" Content="زيارة مدفوعة" IsChecked="{Binding NewPatientIsPaidVisit}" GroupName="DocVisitType" HorizontalAlignment="Left"/>
+                                    <RadioButton Grid.Column="1" Content="مراجعة مجانية" IsChecked="{Binding NewPatientIsFreeVisit}" GroupName="DocVisitType" HorizontalAlignment="Left"/>
+                                </Grid>
+
+                                <!-- Price input (only enabled/visible if paid) -->
+                                <StackPanel Visibility="{Binding NewPatientIsPaidVisit, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <TextBlock Text="سعر الزيارة" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding NewPatientVisitPrice, UpdateSourceTrigger=PropertyChanged}" Tag="25000" Margin="0,0,0,12" HorizontalContentAlignment="Right"/>
+                                </StackPanel>
+
+                                <!-- Patient Files -->
+                                <TextBlock Text="الملفات" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <Grid Margin="0,0,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="رفع ملف" Command="{Binding UploadNewPatientFileCommand}" Background="#0EA5E9" BorderBrush="#0EA5E9" Padding="12,5" FontSize="11" Margin="5,0,0,0"/>
+                                    <TextBox Grid.Column="0" Style="{StaticResource ModernTextBox}" Text="{Binding NewPatientFileName, Mode=OneWay}" IsReadOnly="True" Background="#F1F5F9" HorizontalContentAlignment="Right"/>
+                                </Grid>
+                                <!-- File link & Remove -->
+                                <Border Background="#F0F9FF" BorderBrush="#BAE6FD" BorderThickness="1" CornerRadius="4" Padding="8,4" Margin="0,0,0,10"
+                                        Visibility="{Binding NewPatientFiles, Converter={StaticResource NullToVisibilityConverter}}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Foreground="#0284C7" Margin="0,0,6,0"/>
+                                        <Button Grid.Column="1" Content="{Binding NewPatientFileName}" Style="{StaticResource NavButton}" Padding="0" HorizontalContentAlignment="Left" Foreground="#0284C7" FontSize="11" FontWeight="SemiBold"
+                                                Command="{Binding OpenNewPatientFileCommand}" CommandParameter="{Binding NewPatientFiles}"/>
+                                        <Button Grid.Column="2" Style="{StaticResource NavButton}" Width="16" Height="16" Tag="&#xE711;" ToolTip="حذف الملف" Padding="0" Foreground="#EF4444" FontSize="8"
+                                                Command="{Binding RemoveNewPatientFileCommand}"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Right Column -->
+                            <StackPanel Grid.Column="1" Margin="12,0,0,0" FlowDirection="RightToLeft">
+                                <!-- Name -->
+                                <TextBlock Text="* الاسم" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding NewPatientName, UpdateSourceTrigger=PropertyChanged}" Tag="اسم المريض الثلاثي" Margin="0,0,0,12" HorizontalContentAlignment="Right"/>
+
+                                <!-- Age (Years) -->
+                                <TextBlock Text="* العمر (سنوات)" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding NewPatientAge, UpdateSourceTrigger=PropertyChanged}" Tag="العمر بالسنوات" Margin="0,0,0,12" HorizontalContentAlignment="Right"/>
+
+                                <!-- Age (Months) -->
+                                <TextBlock Text="العمر (أشهر)" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding NewPatientAgeMonths, UpdateSourceTrigger=PropertyChanged}" Tag="أشهر" Margin="0,0,0,12" HorizontalContentAlignment="Right"/>
+
+                                <!-- Birth Date -->
+                                <TextBlock Text="تاريخ الولادة" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <DatePicker SelectedDate="{Binding NewPatientBirthDate}" Height="36" Margin="0,0,0,12" FlowDirection="RightToLeft"/>
+
+                                <!-- Phone -->
+                                <TextBlock Text="رقم الهاتف" FontSize="11" Foreground="{StaticResource SubtextColor}" HorizontalAlignment="Right" Margin="0,0,0,4"/>
+                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding NewPatientPhone, UpdateSourceTrigger=PropertyChanged}" Tag="رقم الهاتف" Margin="0,0,0,12" HorizontalContentAlignment="Right"/>
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+
+                    <!-- Buttons and Message -->
+                    <StackPanel Grid.Row="2">
+                        <TextBlock Text="{Binding AddPatientValidationMessage}" Foreground="#EF4444" FontSize="12" HorizontalAlignment="Right" Margin="0,0,0,10"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Style="{StaticResource ModernButton}" Content="إلغاء" Command="{Binding CancelAddPatientCommand}" Background="#EF4444" BorderBrush="#EF4444" Height="38" Margin="0,0,5,0"/>
+                            <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="حفظ وتأكيد الدخول" Command="{Binding SaveAddPatientAsyncCommand}" Height="38" Margin="5,0,0,0"/>
+                        </Grid>
+                    </StackPanel>
                 </Grid>
             </Border>
         </Grid>
