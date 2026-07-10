@@ -3670,7 +3670,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Button Grid.Column="0" Style="{StaticResource ModernButton}" Content="إلغاء" Command="{Binding CancelAddPatientCommand}" Background="#EF4444" BorderBrush="#EF4444" Height="38" Margin="0,0,5,0"/>
-                            <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="حفظ وتأكيد الدخول" Command="{Binding SaveAddPatientAsyncCommand}" Height="38" Margin="5,0,0,0"/>
+                            <Button Grid.Column="1" Style="{StaticResource ModernButton}" Content="حفظ وتأكيد الدخول" Command="{Binding SaveAddPatientCommand}" Height="38" Margin="5,0,0,0"/>
                         </Grid>
                     </StackPanel>
                 </Grid>
