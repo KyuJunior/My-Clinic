@@ -8,6 +8,7 @@ namespace MedicalApp.Services
         private Patient? _currentPatient;
 
         public string? ActiveDoctorName { get; set; }
+        public System.Collections.Generic.HashSet<string> AuthenticatedDoctors { get; } = new(StringComparer.OrdinalIgnoreCase);
 
         public Patient? CurrentPatient
         {

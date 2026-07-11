@@ -56,9 +56,18 @@ namespace MedicalApp.ViewModels
         }
 
         [RelayCommand]
-        public async Task NavigateToExam()
+        public void NavigateToExam()
         {
-            await OpenDoctorLoginModal();
+            if (!string.IsNullOrEmpty(_sharedStateService.ActiveDoctorName) &&
+                _sharedStateService.AuthenticatedDoctors.Contains(_sharedStateService.ActiveDoctorName))
+            {
+                var mainVm = _serviceProvider.GetRequiredService<MainViewModel>();
+                mainVm.NavigateToClinicalExam();
+            }
+            else
+            {
+                _ = OpenDoctorLoginModal();
+            }
         }
 
         [RelayCommand]
@@ -103,8 +112,15 @@ namespace MedicalApp.ViewModels
                 return;
             }
 
-            if (SelectedDoctor.Password == DoctorPasswordAttempt)
+            bool isAlreadyAuth = _sharedStateService.AuthenticatedDoctors.Contains(SelectedDoctor.Name);
+
+            if (isAlreadyAuth || SelectedDoctor.Password == DoctorPasswordAttempt)
             {
+                if (!isAlreadyAuth)
+                {
+                    _sharedStateService.AuthenticatedDoctors.Add(SelectedDoctor.Name);
+                }
+
                 _sharedStateService.ActiveDoctorName = SelectedDoctor.Name;
                 ShowDoctorLoginModal = false;
                 DoctorPasswordAttempt = string.Empty;

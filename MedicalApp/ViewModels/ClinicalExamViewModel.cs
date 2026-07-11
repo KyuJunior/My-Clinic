@@ -373,6 +373,14 @@ namespace MedicalApp.ViewModels
             {
                 if (doc.Name == doctorName)
                 {
+                    if (_sharedStateService.AuthenticatedDoctors.Contains(doc.Name))
+                    {
+                        ActiveDoctorName = doc.Name;
+                        _sharedStateService.ActiveDoctorName = doc.Name;
+                        _ = PollQueueAsync();
+                        return;
+                    }
+
                     SelectedSwitchDoctor = doc;
                     SwitchDoctorPasswordAttempt = string.Empty;
                     SwitchDoctorErrorMessage = string.Empty;
@@ -389,6 +397,8 @@ namespace MedicalApp.ViewModels
 
             if (SelectedSwitchDoctor.Password == SwitchDoctorPasswordAttempt)
             {
+                _sharedStateService.AuthenticatedDoctors.Add(SelectedSwitchDoctor.Name);
+
                 ActiveDoctorName = SelectedSwitchDoctor.Name;
                 _sharedStateService.ActiveDoctorName = SelectedSwitchDoctor.Name;
                 ShowSwitchDoctorPasswordModal = false;

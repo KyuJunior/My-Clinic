@@ -7,6 +7,7 @@ namespace MedicalApp.Services
     {
         Patient? CurrentPatient { get; set; }
         string? ActiveDoctorName { get; set; }
+        System.Collections.Generic.HashSet<string> AuthenticatedDoctors { get; }
         event Action<Patient?>? CurrentPatientChanged;
     }
 }
