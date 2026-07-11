@@ -11,6 +11,6 @@ namespace MedicalApp.Services
         Task UpdateQueueStatusAsync(int patientId, string status);
         Task CompleteQueueEntryAsync(int patientId);
         Task RemoveFromQueueAsync(int queueEntryId);
-        Task<int> GetCompletedCountTodayAsync();
+        Task<int> GetCompletedCountTodayAsync(string? doctorName = null);
     }
 }

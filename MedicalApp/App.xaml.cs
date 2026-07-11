@@ -99,6 +99,16 @@ namespace MedicalApp
                     ")"
                 );
 
+                // Create DoctorSettings table if it doesn't exist
+                await dbContext.Database.ExecuteSqlRawAsync(
+                    "IF OBJECT_ID('dbo.DoctorSettings', 'U') IS NULL " +
+                    "CREATE TABLE dbo.DoctorSettings (" +
+                    "    DoctorSettingId INT IDENTITY(1,1) PRIMARY KEY," +
+                    "    DoctorName NVARCHAR(200) NOT NULL UNIQUE," +
+                    "    SettingsJson NVARCHAR(MAX) NOT NULL" +
+                    ")"
+                );
+
                 // Add columns to Visits if they don't exist
                 await dbContext.Database.ExecuteSqlRawAsync(
                     "IF COL_LENGTH('dbo.Visits', 'Prescription') IS NULL ALTER TABLE dbo.Visits ADD Prescription NVARCHAR(MAX) NOT NULL DEFAULT ''"

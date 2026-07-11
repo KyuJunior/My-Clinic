@@ -111,7 +111,14 @@ namespace MedicalApp.ViewModels
             }
         }
 
-        private static readonly string DraftsFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "session_drafts.json");
+        private string DraftsFile
+        {
+            get
+            {
+                var suffix = string.IsNullOrEmpty(ActiveDoctorName) ? "default" : ActiveDoctorName.Replace(" ", "_").Replace(".", "");
+                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"session_drafts_{suffix}.json");
+            }
+        }
         private bool _isSavingOrLoadingDraft;
 
         [ObservableProperty]
@@ -348,7 +355,7 @@ namespace MedicalApp.ViewModels
             try
             {
                 var activeTask = _queueService.GetActiveQueueAsync();
-                var completedTask = _queueService.GetCompletedCountTodayAsync();
+                var completedTask = _queueService.GetCompletedCountTodayAsync(ActiveDoctorName);
                 await Task.WhenAll(activeTask, completedTask);
 
                 var active = activeTask.Result.Where(q => q.DoctorName == ActiveDoctorName).ToList();
@@ -375,6 +382,7 @@ namespace MedicalApp.ViewModels
                 {
                     if (_sharedStateService.AuthenticatedDoctors.Contains(doc.Name))
                     {
+                        ExitToDashboard();
                         ActiveDoctorName = doc.Name;
                         _sharedStateService.ActiveDoctorName = doc.Name;
                         _ = PollQueueAsync();
@@ -399,6 +407,7 @@ namespace MedicalApp.ViewModels
             {
                 _sharedStateService.AuthenticatedDoctors.Add(SelectedSwitchDoctor.Name);
 
+                ExitToDashboard();
                 ActiveDoctorName = SelectedSwitchDoctor.Name;
                 _sharedStateService.ActiveDoctorName = SelectedSwitchDoctor.Name;
                 ShowSwitchDoctorPasswordModal = false;
@@ -506,7 +515,8 @@ namespace MedicalApp.ViewModels
             try
             {
                 var visits = await _visitService.GetVisitsByPatientIdAsync(CurrentPatient.PatientId);
-                VisitHistory = new ObservableCollection<Visit>(visits);
+                var doctorVisits = visits.Where(v => string.Equals(v.DoctorName, ActiveDoctorName, StringComparison.OrdinalIgnoreCase)).ToList();
+                VisitHistory = new ObservableCollection<Visit>(doctorVisits);
             }
             catch (Exception ex)
             {

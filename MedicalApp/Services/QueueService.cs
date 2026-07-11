@@ -90,13 +90,17 @@ namespace MedicalApp.Services
             }
         }
 
-        public async Task<int> GetCompletedCountTodayAsync()
+        public async Task<int> GetCompletedCountTodayAsync(string? doctorName = null)
         {
             using var context = await _contextFactory.CreateDbContextAsync();
             var today = System.DateTime.Today;
-            return await context.QueueEntries
-                .Where(q => q.Status == "Completed" && q.CreatedAt >= today)
-                .CountAsync();
+            var query = context.QueueEntries
+                .Where(q => q.Status == "Completed" && q.CreatedAt >= today);
+            if (!string.IsNullOrEmpty(doctorName))
+            {
+                query = query.Where(q => q.DoctorName == doctorName);
+            }
+            return await query.CountAsync();
         }
     }
 }

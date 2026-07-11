@@ -2,10 +2,14 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using MedicalApp.Models;
+using MedicalApp.Data;
+using MedicalApp.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MedicalApp.ViewModels
@@ -13,6 +17,8 @@ namespace MedicalApp.ViewModels
     public partial class PrintSettingsViewModel : ObservableObject
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
+        private readonly ISharedStateService _sharedStateService;
         private static readonly string SettingsFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "print_settings.json");
 
         [ObservableProperty]
@@ -102,9 +108,14 @@ namespace MedicalApp.ViewModels
             }
         }
 
-        public PrintSettingsViewModel(IServiceProvider serviceProvider)
+        public PrintSettingsViewModel(
+            IServiceProvider serviceProvider,
+            IDbContextFactory<AppDbContext> contextFactory,
+            ISharedStateService sharedStateService)
         {
             _serviceProvider = serviceProvider;
+            _contextFactory = contextFactory;
+            _sharedStateService = sharedStateService;
             LoadSettings();
         }
 
@@ -112,48 +123,64 @@ namespace MedicalApp.ViewModels
         {
             try
             {
-                if (File.Exists(SettingsFile))
+                PrintSettings? settings = null;
+                var activeDocName = _sharedStateService.ActiveDoctorName;
+                if (!string.IsNullOrEmpty(activeDocName))
                 {
-                    string json = File.ReadAllText(SettingsFile);
-                    var settings = JsonSerializer.Deserialize<PrintSettings>(json);
-                    if (settings != null)
+                    using var context = _contextFactory.CreateDbContext();
+                    var record = context.DoctorSettings.FirstOrDefault(s => s.DoctorName == activeDocName);
+                    if (record != null)
                     {
-                        RxBackgroundPath = settings.RxBackgroundPath;
-                        PrintBackground = settings.PrintBackground;
-                        
-                        PatientNameX = settings.PatientNameX;
-                        PatientNameY = settings.PatientNameY;
-                        
-                        PatientAgeGenderX = settings.PatientAgeGenderX;
-                        PatientAgeGenderY = settings.PatientAgeGenderY;
-                        
-                        PatientDateX = settings.PatientDateX;
-                        PatientDateY = settings.PatientDateY;
-                        
-                        RxSymbolX = settings.RxSymbolX;
-                        RxSymbolY = settings.RxSymbolY;
-                        ShowRxSymbol = settings.ShowRxSymbol;
-                        
-                        DrugsX = settings.DrugsX;
-                        DrugsY = settings.DrugsY;
-                        FontSize = settings.FontSize;
-
-                        // Clinic Profile
-                        ClinicNameAr = settings.ClinicNameAr ?? "عيادتي التخصصية";
-                        ClinicNameEn = settings.ClinicNameEn ?? "My Specialty Clinic";
-                        ClinicPhone = settings.ClinicPhone ?? "+964 770 123 4567";
-                        ClinicAddress = settings.ClinicAddress ?? "Baghdad, Iraq";
-                        ClinicSpecialty = settings.ClinicSpecialty ?? "Gynecology & Obstetrics | التوليد وأمراض النساء";
-
-                        // Database & Backups
-                        DbBackupPath = settings.DbBackupPath ?? @"C:\Myapps\Backups";
-                        DbBackupInterval = settings.DbBackupInterval ?? "Daily | يومي";
-                        DbAutoBackupEnabled = settings.DbAutoBackupEnabled;
-
-                        // Staff Settings
-                        AdminPassword = settings.AdminPassword ?? "••••••••";
-                        RequireLogin = settings.RequireLogin;
+                        settings = JsonSerializer.Deserialize<PrintSettings>(record.SettingsJson);
                     }
+                }
+
+                if (settings == null)
+                {
+                    if (File.Exists(SettingsFile))
+                    {
+                        string json = File.ReadAllText(SettingsFile);
+                        settings = JsonSerializer.Deserialize<PrintSettings>(json);
+                    }
+                }
+
+                if (settings != null)
+                {
+                    RxBackgroundPath = settings.RxBackgroundPath;
+                    PrintBackground = settings.PrintBackground;
+                    
+                    PatientNameX = settings.PatientNameX;
+                    PatientNameY = settings.PatientNameY;
+                    
+                    PatientAgeGenderX = settings.PatientAgeGenderX;
+                    PatientAgeGenderY = settings.PatientAgeGenderY;
+                    
+                    PatientDateX = settings.PatientDateX;
+                    PatientDateY = settings.PatientDateY;
+                    
+                    RxSymbolX = settings.RxSymbolX;
+                    RxSymbolY = settings.RxSymbolY;
+                    ShowRxSymbol = settings.ShowRxSymbol;
+                    
+                    DrugsX = settings.DrugsX;
+                    DrugsY = settings.DrugsY;
+                    FontSize = settings.FontSize;
+
+                    // Clinic Profile
+                    ClinicNameAr = settings.ClinicNameAr ?? "عيادتي التخصصية";
+                    ClinicNameEn = settings.ClinicNameEn ?? "My Specialty Clinic";
+                    ClinicPhone = settings.ClinicPhone ?? "+964 770 123 4567";
+                    ClinicAddress = settings.ClinicAddress ?? "Baghdad, Iraq";
+                    ClinicSpecialty = settings.ClinicSpecialty ?? "Gynecology & Obstetrics | التوليد وأمراض النساء";
+
+                    // Database & Backups
+                    DbBackupPath = settings.DbBackupPath ?? @"C:\Myapps\Backups";
+                    DbBackupInterval = settings.DbBackupInterval ?? "Daily | يومي";
+                    DbAutoBackupEnabled = settings.DbAutoBackupEnabled;
+
+                    // Staff Settings
+                    AdminPassword = settings.AdminPassword ?? "••••••••";
+                    RequireLogin = settings.RequireLogin;
                 }
             }
             catch (Exception ex)
@@ -176,7 +203,9 @@ namespace MedicalApp.ViewModels
                 try
                 {
                     string ext = Path.GetExtension(openFileDialog.FileName);
-                    string destPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"rx_template{ext}");
+                    var activeDocName = _sharedStateService.ActiveDoctorName;
+                    var suffix = string.IsNullOrEmpty(activeDocName) ? "default" : activeDocName.Replace(" ", "_").Replace(".", "");
+                    string destPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"rx_template_{suffix}{ext}");
 
                     // If file already exists, delete it first to overwrite cleanly
                     if (File.Exists(destPath))
@@ -236,6 +265,31 @@ namespace MedicalApp.ViewModels
                     RequireLogin = RequireLogin
                 };
 
+                // Save to database for active doctor
+                var activeDocName = _sharedStateService.ActiveDoctorName;
+                if (!string.IsNullOrEmpty(activeDocName))
+                {
+                    using var context = _contextFactory.CreateDbContext();
+                    var record = context.DoctorSettings.FirstOrDefault(s => s.DoctorName == activeDocName);
+                    string serializedJson = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+                    if (record != null)
+                    {
+                        record.SettingsJson = serializedJson;
+                        context.DoctorSettings.Update(record);
+                    }
+                    else
+                    {
+                        var newRecord = new DoctorSetting
+                        {
+                            DoctorName = activeDocName,
+                            SettingsJson = serializedJson
+                        };
+                        context.DoctorSettings.Add(newRecord);
+                    }
+                    context.SaveChanges();
+                }
+
+                // Fallback: save to local file
                 string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(SettingsFile, json);
                 MessageBox.Show("Print calibration settings saved successfully!", "Settings Saved", MessageBoxButton.OK, MessageBoxImage.Information);

@@ -6,6 +6,9 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using MedicalApp.Data;
 using MedicalApp.Models;
 
 namespace MedicalApp.Services
@@ -18,15 +21,42 @@ namespace MedicalApp.Services
 
     public class PrintService : IPrintService
     {
-        private static readonly string SettingsFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "print_settings.json");
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
+        private readonly ISharedStateService _sharedStateService;
+
+        public PrintService(IDbContextFactory<AppDbContext> contextFactory, ISharedStateService sharedStateService)
+        {
+            _contextFactory = contextFactory;
+            _sharedStateService = sharedStateService;
+        }
 
         private PrintSettings LoadSettings()
         {
             try
             {
-                if (File.Exists(SettingsFile))
+                var activeDocName = _sharedStateService.ActiveDoctorName;
+                if (!string.IsNullOrEmpty(activeDocName))
                 {
-                    string json = File.ReadAllText(SettingsFile);
+                    using var context = _contextFactory.CreateDbContext();
+                    var record = context.DoctorSettings.FirstOrDefault(s => s.DoctorName == activeDocName);
+                    if (record != null)
+                    {
+                        var settings = JsonSerializer.Deserialize<PrintSettings>(record.SettingsJson);
+                        if (settings != null) return settings;
+                    }
+                }
+            }
+            catch
+            {
+                // Fallback
+            }
+
+            try
+            {
+                var legacyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "print_settings.json");
+                if (File.Exists(legacyPath))
+                {
+                    string json = File.ReadAllText(legacyPath);
                     var settings = JsonSerializer.Deserialize<PrintSettings>(json);
                     if (settings != null) return settings;
                 }
